@@ -1,4 +1,4 @@
-# ChorDiags
+# ChordDiags
 
 > A guitar chord diagram editor / builder using VueJS.
 
