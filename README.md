@@ -1,6 +1,6 @@
-# chords
+# ChorDiags
 
-> A Vue.js project
+> A guitar chord diagram editor / builder using VueJS.
 
 ## Build Setup
 

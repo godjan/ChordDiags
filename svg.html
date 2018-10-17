@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+
+        <style>
+
+            /* .bar {
+    fill: #a9a9a9;
+    opacity: 0.6;
+  } */
+        .fret {
+            fill:rgb(255,255,255);stroke-width:0;stroke:rgb(0,0,0);
+        }
+       
+            .fret:hover {
+                cursor:move;
+            }
+        </style>
+
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        
+        
+        <svg width="800" height="800">
+                <g>
+                        <rect x="100" y="30" width="25" height="25" class="fret"> </rect>
+                        
+                        <line x1="112" y1="30" x2="112" y2="55" class="bar"
+                              stroke="black" stroke-width="2" fill="rgb(121,0,121)"></line> 
+
+                        <rect x="125" y="30" width="25" height="25" class="fret"></rect>
+                                                     
+                        <line x1="137" y1="30" x2="137" y2="55" class="bar"
+                              stroke="black" stroke-width="2" fill="rgb(121,0,121)"></line> 
+
+                        <rect x="150" y="30" width="25" height="25" class="fret"></rect>
+                        
+                        <line x1="162" y1="30" x2="162" y2="55" class="bar"
+                              stroke="black" stroke-width="2" fill="rgb(121,0,121)"></line> 
+
+                        <rect x="175" y="30" width="25" height="25" class="fret"></rect>
+                    
+                        <line x1="187" y1="30" x2="187" y2="55" class="bar"
+                              stroke="black" stroke-width="2" fill="rgb(121,0,121)"></line> 
+
+                        <rect x="200" y="30" width="25" height="25" class="fret"></rect>
+                
+                        <line x1="212" y1="30" x2="212" y2="55" class="bar"
+                            stroke="black" stroke-width="2" fill="rgb(121,0,121)"></line> 
+
+                        <rect x="225" y="30" width="25" height="25" class="fret"></rect>
+                    
+                        <line x1="237" y1="30" x2="237" y2="55" class="bar"
+                            stroke="black" stroke-width="2" fill="rgb(121,0,121)"></line> 
+                        <!-- <image xlink:href="https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png" 
+                         x="115"
+                         y="40"
+                         height="25"
+                         width="25"/> -->
+                   <!-- <text x="0" y="15" fill="black" >Line #1: Without opacity.</text> -->
+                   
+                </g> 
+             </svg>
+
+
+             <script>
+
+                var bars = document.getElementsByClassName('bar');
+
+                for (var i = 0; i < bars.length; i++) {
+                    bars[i].addEventListener('mouseover', mouseOverEffect);
+                    bars[i].addEventListener('mouseout', mouseOutEffect);
+                }
+
+                function mouseOverEffect() {
+                   console.log('over')
+                }
+                function mouseOutEffect() {
+                    console.log('out')
+                }
+             </script>
+    </body>
+</html>
