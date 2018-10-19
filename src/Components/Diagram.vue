@@ -34,8 +34,8 @@
         <v-card-text class="px-0">
             <v-container class="text-md-center ">
                 <v-layout>
-                    <v-flex xs2>frets</v-flex>
-                    <v-flex xs8 >
+                   
+                    <v-flex xs10 >
                        
                         <Fretboard :diagId="diagram.id"
                                    :width="150" 
@@ -45,11 +45,11 @@
                                    :activeShape="activeShape"></Fretboard>
                     </v-flex>
                     <v-flex xs2>
-                          <v-btn-toggle v-model="toggle_one" mandatory>
-                        <v-btn flat icon><v-icon size="18" @click="setShape('dot')">radio_button_unchecked</v-icon></v-btn>
-                        <v-btn flat icon><v-icon size="18" @click="setShape('square')">check_box_outline_blank</v-icon></v-btn>
-                        <v-btn flat icon><v-icon size="18" @click="setShape('cross')">close</v-icon></v-btn>
-                        <v-btn flat icon><v-icon size="18" @click="setShape('triangle')">navigation</v-icon></v-btn>
+                        <v-btn-toggle v-model="toggle_one" mandatory>
+                        <v-btn flat icon @click="setShape('dot')"><v-icon size="18" >radio_button_unchecked</v-icon></v-btn>
+                        <v-btn flat icon @click="setShape('square')"><v-icon size="18">check_box_outline_blank</v-icon></v-btn>
+                        <v-btn flat icon @click="setShape('cross')"><v-icon size="18">close</v-icon></v-btn>
+                        <v-btn flat icon @click="setShape('triangle')"><v-icon size="18" >navigation</v-icon></v-btn>
                          </v-btn-toggle>
                     </v-flex>
                 </v-layout>
@@ -88,6 +88,7 @@ export default {
     },
 
     methods:{
+       
         clearAll() {    
 
         },

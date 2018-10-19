@@ -17,59 +17,60 @@
             <strong>Tuning</strong> {{ sheet.tuning}}
         </v-flex>
     </v-layout>
-        <v-layout row wrap>
-            <v-flex xs6 sm6 md4 lg3 v-for="(item, index) in sheet.diagrams" :key="`diag${index}`" >
+    <v-layout row wrap>
+        <v-flex xs6 sm6 md4 lg3 v-for="(item, index) in sheet.diagrams" :key="`diag${index}`" >
 
-                <Diagram :diagram="item" 
-                        :onDelete="deleteDiagram" 
-                        :fretspan="sheet.fretspan"></Diagram>
-            </v-flex>
+            <Diagram :diagram="item" 
+                    :onDelete="deleteDiagram" 
+                    :fretspan="sheet.fretspan"></Diagram>
+        </v-flex>
 
-            <v-flex xs3>
-                <v-btn
-                    @click="addDiagram()"
-                    color="pink"
-                    fab
-                    dark
-                    small
-                >
-                    <v-icon>add</v-icon>
-                </v-btn>
-            </v-flex> 
-        </v-layout>
-    <v-dialog
-            v-model="dialog"
-            max-width="290"
+        <v-flex xs3>
+            <v-btn
+                @click="addDiagram()"
+                color="pink"
+                fab
+                dark
+                small
+            >
+                <v-icon>add</v-icon>
+            </v-btn>
+        </v-flex> 
+    </v-layout>
+
+
+    <v-dialog v-model="dialog"
+              max-width="290"
     >
-      <v-card>
+    <v-card>
         
         <v-card-text>
-         Delete diagram ?
+        Delete diagram ?
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
-          <v-btn
+        <v-btn
             color="green darken-1"
             flat="flat"
             @click="dialog = false"
-          >
+        >
             No
-          </v-btn>
+        </v-btn>
 
-          <v-btn
+        <v-btn
             color="green darken-1"
             flat="flat"
             @click="confirmDeleteDiag()"
-          >
+        >
             Yes
-          </v-btn>
+        </v-btn>
         </v-card-actions>
-      </v-card>
+    </v-card>
     </v-dialog>
 
-    </v-layout>
+  
 </div>
 </template>
 
