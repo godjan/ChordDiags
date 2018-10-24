@@ -1,6 +1,6 @@
 <template>
 
-<div>
+<section>
     <v-card >       
         <v-toolbar dense flat  @mouseover="showmenu = true" @mouseleave="showmenu = false">
             <input class="title active" 
@@ -12,7 +12,7 @@
             <v-spacer></v-spacer>
 
             <v-toolbar-items v-show="showmenu">
-                <v-btn icon flat @click="onDelete(diagram.id)"><v-icon small color="red">clear</v-icon></v-btn>
+                <v-btn icon flat @click="onDelete(diagram)"><v-icon small color="red">clear</v-icon></v-btn>
 
                 <v-menu bottom left>
                     <v-btn  slot="activator" icon>
@@ -37,12 +37,15 @@
                    
                     <v-flex xs10 >
                        
-                        <Fretboard :diagId="diagram.id"
+                        <fretboard :diagId="diagram.id"
+                                   :diagram="diagram"
                                    :width="150" 
                                    :height="140"
-                                   :span="span" 
+                                   :fretSpan="span" 
                                    :strings="strings"
-                                   :activeShape="activeShape"></Fretboard>
+                                   :activeShape="activeShape"
+                                   :addNote="addNote"
+                                  ></fretboard>
                     </v-flex>
                     <v-flex xs2>
                         <v-btn-toggle v-model="toggle_one" mandatory>
@@ -58,9 +61,7 @@
           
        </v-card-text>
     </v-card>
-
-    
-    </div>
+</section>
 </template>
 
 <script>
@@ -74,29 +75,35 @@ export default {
     props:{
         diagram: Object,
         onDelete: Function,
-        fretspan: Number
+        fretSpan: Number
     },
 
-    data() {
-        return {
-           showmenu:false,
-           span: Config.FRETSPAN_DEFAULT,
+    data: () => (
+       {
+           showmenu: false,
+           span: this.fretSpan || Config.FRETSPAN_DEFAULT,
            strings: Config.STRINGS,
            activeShape: 'dot',
-           toggle_one:0
-        }
-    },
+           toggle_one: 0
+        })
+    ,
 
     methods:{
        
-        clearAll() {    
+        clearAll() {   
 
+            this.$sheetStore.clearDiagram(this.diagram.id)
         },
         clearNotes() {
-
+            
+           this.$sheetStore.deleteNotes(this.diagram.id)
         },
         setShape(shape) {
+
             this.activeShape = shape
+        },
+        addNote(note) {
+
         }
     },
 
@@ -105,13 +112,11 @@ export default {
 </script>
 
 <style >
-.v-btn-toggle {
-  flex-direction: column;
-}
 
 .v-btn-toggle {
- box-shadow:none;
+  flex-direction: column; box-shadow:none;
 }
+
 
 
 </style>

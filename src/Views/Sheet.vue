@@ -69,7 +69,7 @@ export default {
     },
     created() {
 
-        console.log('Sheet created')
+        //console.log('Sheet created')
         this.loading = true;
 
         if(this.$route.params.id) {
@@ -84,7 +84,12 @@ export default {
                     })
         }
         else {
-            this.state.sheet= { id: 0, fretspan: Config.FRETSPAN_DEFAULT, version: 1, title: null, description:'', tags: '' };
+            this.state.sheet= { id: 0, 
+                                fretspan: Config.FRETSPAN_DEFAULT,
+                                version: 1, 
+                                title: null, 
+                                description:'', 
+                                tags: '' };
         }
                   
     },

@@ -1,0 +1,2 @@
+[] prevent tab key on annotations
+[] use store for current diagram & notes

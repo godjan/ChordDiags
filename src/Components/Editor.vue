@@ -1,6 +1,5 @@
 <template>
-<div>
-  
+<section>
     <v-layout>
         <v-flex sm12 lg12> 
              <input type="text" 
@@ -15,14 +14,15 @@
     <v-layout>
         <v-flex sm12 lg12> 
             <strong>Tuning</strong> {{ sheet.tuning}}
+           
         </v-flex>
     </v-layout>
     <v-layout row wrap>
-        <v-flex xs6 sm6 md4 lg3 v-for="(item, index) in sheet.diagrams" :key="`diag${index}`" >
+        <v-flex xs6 sm6 md4 lg3 v-for="(diagram, index) in sheet.diagrams" :key="`diag${index}`" >
 
-            <Diagram :diagram="item" 
-                    :onDelete="deleteDiagram" 
-                    :fretspan="sheet.fretspan"></Diagram>
+            <Diagram :diagram="diagram"
+                     :onDelete="deleteDiagram" 
+                     :fretSpan="sheet.fretSpan"></Diagram>
         </v-flex>
 
         <v-flex xs3>
@@ -71,10 +71,20 @@
     </v-dialog>
 
   
-</div>
+</section>
 </template>
 
 <script>
+
+function getEmptyDiagram(id) {
+
+    return { id: 'diag_' + id, 
+            number: id, 
+            chordName:'', 
+            notes:[], 
+            fretNumbers: {'1':'', '2':'', '3' : '','4' : '','5':''}
+        };
+}
 
 import Diagram from './Diagram'
 //import Store from '../store.js'
@@ -89,7 +99,7 @@ export default {
 
         return {
             dialog: false,
-            selectedDiagId: 0,
+            selectedDiagram: null,
             state: this.$sheetStore.state
         }
     },
@@ -108,28 +118,36 @@ export default {
         confirmDeleteDiag() {
 
             this.dialog = false;
-            this.sheet.diagrams = this.sheet.diagrams.filter(d => d.id !=  this.selectedDiagId)
-            this.selectedDiagId = 0;
+            
+            this.$sheetStore.deleteDiagram(this.selectedDiagram);
+            this.selectedDiagram = null;
         },
-        deleteDiagram(diagId) {
+        deleteDiagram(diagram) {
 
-            this.selectedDiagId = diagId;
+            this.selectedDiagram = diagram;
             this.dialog = true;
            
         },
         addDiagram() {
           
             const count = this.sheet.diagrams.length;
-            let nextId = 1;
+            let nextDiagId = 1;
 
             if(count > 0) {
-                nextId = this.sheet.diagrams[count-1].number + 1;
+                nextDiagId = this.sheet.diagrams[count-1].number + 1;
             }
-            var diag =  { id: 'diag_' + nextId, number: nextId, chordName:'', notes:[], fretNumbers:[]}
-            this.sheet.diagrams.push(diag);
+            var diagram = getEmptyDiagram(nextDiagId);
+            
+            this.$sheetStore.addDiagram(diagram);
         }
     },
+    mounted() {
 
+        if(this.sheet.id == 0) {
+
+            this.addDiagram();
+        }
+    },
     components: { Diagram }
 }
 </script>

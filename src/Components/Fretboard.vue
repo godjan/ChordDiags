@@ -1,24 +1,12 @@
 <template>
 
-    <div>
-        <!-- <div @keyup="submit" style="float:left">
-
-            <svg width="60" height="150">
-
-                <rect x="0" 
-                    y="25"
-                    width="30" 
-                    height="20"
-                    class="fretNum"
-                    stroke-dasharray="2,2"
-                    tabindex="0"
-                    @click="setEditedFret(1)"
-                ></rect>
-                <text x="0" y="40" class="fretText">{{fretText}}</text>
-            </svg>
-        </div> -->
-        <FretAnnotations :height="noteHeight"
-                         :fretbars="fretbars"></FretAnnotations>
+    <section>
+  
+        <fret-annotations :height="noteHeight"
+                          :fretSpan="fretSpan"
+                          :fretNumbers="diagram.fretNumbers"
+                          :fretNumberChanged="fretNumberChanged"
+        ></fret-annotations>
 
         <div  style="float:left">
             <svg :width="width" :height="height" :id="`fb_${diagId}`" >
@@ -29,7 +17,7 @@
                             :x1="getStringX(s)" 
                             :y1="noteHeight" 
                             :x2="getStringX(s)" 
-                            :y2="(span + 1) * noteHeight" 
+                            :y2="(fretSpan + 1) * noteHeight" 
                             class="string"
                             :key="`${diagId}_string_${s}`"
                             ></line>
@@ -45,7 +33,7 @@
                             ></line>
 
                         <!--- note placeholder rects -->
-                        <template v-for="fret in span + 1">
+                        <template v-for="fret in fretSpan + 1">
                             <template v-for="string in strings">
                                 <rect :x="(string-1) * noteWidth" 
                                     :y="(fret-1) * noteHeight"
@@ -74,7 +62,7 @@
                 </g>
             </svg>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>
@@ -88,7 +76,7 @@ export default {
 
     props:{
         diagId: String,
-        span: Number,
+        fretSpan: Number,
         strings: Number,
         width: Number,
         height: Number,
@@ -99,30 +87,36 @@ export default {
         return {
             stringCount: Number(this.strings) || 6,
             noteWidth: Math.floor(this.width / (Number(this.strings) || Config.STRINGS)),
-            noteHeight: Math.floor(this.height / ((this.span +1) || Config.FRETSPAN_DEFAULT)),
+            noteHeight: Math.floor(this.height / ((this.fretSpan +1) || Config.FRETSPAN_DEFAULT)),
             showShapeAtMouse: false,
-            //fretboardCoord:{ x: 0, y: 0}, 
             neckPosition: { fret: 0, string: 0 },
-            notes:[],
-            validFrets: ['0','1','2','3','4','5','6','7','8','9'],
-            fretText:'',
+            state: this.$sheetStore.state
         }
-    },
+    },  
     computed: {
 
+        diagram() {
+
+            return this.$sheetStore.getDiagram(this.diagId);
+        },
+        notes() {
+
+            return this.diagram.notes;
+        },
         noteCount() {
-            return this.stringCount * this.span;
+
+            return this.stringCount * this.fretSpan;
         },
         fretbars() {
 
-            return this.span + 1;
+            return this.fretSpan + 1;
         },
         widthScale() {
 
             return { quarter: Math.floor(this.noteWidth / 4),
                      half: Math.floor(this.noteWidth / 2),
                      third: Math.floor(this.noteWidth / 3),
-                     twoThirds: Math.floor(this.noteWidth / 3)  *2 
+                     twoThirds: Math.floor(this.noteWidth / 3) *  2
             }
         },
         heightScale() {
@@ -130,54 +124,45 @@ export default {
              return { quarter: Math.floor(this.noteHeight / 4),
                      half: Math.floor(this.noteHeight / 2),
                      third: Math.floor(this.noteHeight / 3),
-                     twoThirds: Math.floor(this.noteHeight / 3)  *2 
+                     twoThirds: Math.floor(this.noteHeight / 3) * 2 
             }
         }
     },
     methods: {
 
-        submit(event) {
-          
-            if(event.key == 'Backspace')    
-                this.fretText = this.fretText.substring(0, this.fretText.length-1)
-            else
-             {
-                 
-                if(this.validFrets.indexOf(event.key) == -1)
-                    return;
+        fretNumberChanged(fretIndex, newVal) {
 
-                this.fretText += event.key.toString()
-
-                //todo : remove 0 in front
-             }
-            //console.log(event.key)
+           this.$sheetStore.updateFretContent(this.diagId, fretIndex, newVal);
         },
-        setEditedFret(fretNum) {
-            console.log(fretNum)
-        },
+        
         toggleNote() {
          
-            var index = this.notes.findIndex(n => n.neckPosition.fret == this.neckPosition.fret && 
-                                                  n.neckPosition.string == this.neckPosition.string);
+            var noteIndex = this.notes.findIndex(n => n.neckPosition.fret == this.neckPosition.fret && 
+                                                     n.neckPosition.string == this.neckPosition.string);
 
-            console.log(`toggling at ${JSON.stringify(this.neckPosition)}`)
+            //console.log(`toggling at ${JSON.stringify(this.neckPosition)}`)
            
-            if(index == -1) {
+            if(noteIndex == -1) {
 
-                this.notes.push({ neckPosition: this.neckPosition,
-                                  shape: this.activeShape
-                                })
+                this.$sheetStore.addNote(this.diagId,
+                                        { neckPosition: this.neckPosition,
+                                          shape: this.activeShape
+                                        });
             }
             else {
 
-                if(this.notes[index].shape != this.activeShape) {
+                 if(this.notes[noteIndex].shape != this.activeShape) {
 
-                    this.notes[index] = { neckPosition: this.neckPosition,
-                                          shape: this.activeShape
-                                        };
-                }
-                else
-                    this.notes.splice(index, 1)                                      
+                        this.$sheetStore.updateNote(this.diagId, 
+                                                    noteIndex,
+                                                    { 
+                                                      neckPosition: this.neckPosition,
+                                                      shape: this.activeShape
+                                                    }); 
+                 }
+                 else {
+                     this.$sheetStore.deleteNote(this.diagId, noteIndex);   
+                 }                                  
             }
         },
         over(fret, string) {
@@ -257,7 +242,7 @@ export default {
 
         getStringBottomY() {
            
-            return (this.span +1) * this.noteHeight;
+            return (this.fretSpan +1) * this.noteHeight;
         },
 
         shapeClass(shape) {
@@ -267,34 +252,11 @@ export default {
 
             return ''
         },
-        // getX(index) {
-
-        //     let res = ((index-1) % this.stringCount) * this.noteWidth
-          
-        //     return ((index-1) % this.stringCount) * this.noteWidth;
-        // },
-        // getY(index) {
-
-        //     let y;
-
-        //     let newLine = (index-1) % this.stringCount == 0;
-
-        //     if(newLine) {
-        //        y = ((index-1) / this.stringCount) * this.noteWidth;
-        //     } else {
-        //        y = Math.floor((index-1) / this.stringCount) * this.noteWidth;
-        //     }
-
-        //    // console.log('index: ' + index + ' y = '+ y)
-        //     return y;
-        // }
-        
     },
-    mounted() {
-        // var svg1 = document.getElementById(`fb_${this.diagId}`);
-        // var bbox = svg1.getBBox();
-        // console.log('W = ' + bbox.width + ' H = ' + bbox.height);
-        
+    created() {
+      
+        //this.diagram = this.$sheetStore.getDiagram(this.diagId);
+        //this.notes = this.diagram.notes;
     },
     components: { FretAnnotations }
 }
@@ -305,7 +267,7 @@ export default {
 .nofill {
      /* fill:rgb(255,255,255);*/
      fill-opacity: 0; 
-       stroke:black;
+     stroke:black;
 }
 
 .note {

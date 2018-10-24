@@ -15,8 +15,8 @@
                
                 <v-toolbar>
                     <v-switch
-                    :label="state.edition ? 'Edition' : 'View'"
-                    v-model="state.edition"
+                        :label="state.edition ? 'Edition' : 'View'"
+                        v-model="state.edition"
                     >
                     </v-switch>
 
@@ -29,7 +29,8 @@
                     <v-container
                         fluid
                         grid-list-lg>
-                         
+                        
+                        <!------------------------- Editor ---------------------->
                         <Editor></Editor>
                          
                     </v-container>
@@ -41,9 +42,23 @@
 
 <script>
 
+
 import Store from '../store.js'
 import Editor from '../Components/Editor'
 import Config from '../config.js'
+
+function getEmptySheet() {
+
+    return { id: 0, 
+            fretspan: Config.FRETSPAN_DEFAULT, 
+            tuning: Config.TUNING_DEFAULT,  
+            version: 1, 
+            title: '', 
+            description:'', 
+            tags: '',
+            diagrams: []
+    }
+}
 
 export default {
     
@@ -60,17 +75,9 @@ export default {
     
     created() {
 
-         this.$sheetStore.setSheet({ id: 0, 
-                        fretspan: Config.FRETSPAN_DEFAULT, 
-                        tuning: Config.TUNING_DEFAULT,  
-                        version: 1, 
-                        title: '', 
-                        description:'', 
-                        tags: '',
-                        diagrams: []
-                     });
+        this.$sheetStore.setSheet(getEmptySheet());
         // show one diagram by default          
-       this.$sheetStore.setDiagrams([{}]);
+       //this.$sheetStore.setDiagrams([{}]);
    
        // console.log('created ' + JSON.stringify(this.$sheetStore.state.sheet.diagrams))
     }

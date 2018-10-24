@@ -1,18 +1,18 @@
 <template>
 
-    <div @keyup="fretTextChanged" style="float:left">
-       
+    <div @keyup="onEditFretNumber" style="float:left">
+     
         <svg width="60" height="150">
 
-             <text v-for="fret in fretbars-1" 
+             <text v-for="fret in fretSpan" 
                   :key="`annot_${fret}`"
                   x="25"  
-                  :y="fret * height + height-2" 
+                  :y="fret * height + height-4" 
                   :height="height"
                    @click="setEditedFret(fret)"
-                  class="fretText">{{fretText[fret]}}</text>
+                  class="fretText">{{ fretNumbers[fret] }}</text>
 
-            <rect   v-for="fret in fretbars-1"
+            <rect   v-for="fret in fretSpan"
                     x="15" 
                     :y="(fret) * height"
                     width="30" 
@@ -35,32 +35,37 @@ export default {
 
     name:'FretAnnotations',
 
-    props: ['height','fretbars'],
+    props: ['fretNumbers', 'fretNumberChanged', 'height','fretSpan'],
 
     data() {
         return {
             validFrets: ['0','1','2','3','4','5','6','7','8','9'],
-            fretText:{ 1:'', 2: '', 3:'', 4:'', 5:''},
             selectedFret: -1
         }
     },
 
     methods: {
 
-        fretTextChanged(event) {
+        onEditFretNumber(event) {
           
-           console.log('selected fret ' + this.selectedFret)
+           console.log('editing fret ' + this.selectedFret)
            
+           const fretContent = this.fretNumbers[this.selectedFret];
+
             if(event.key == 'Backspace') {
-              
-                this.fretText[this.selectedFret] = this.fretText[this.selectedFret].substring(0, this.fretText.length-1)
+       
+                this.fretNumberChanged(this.selectedFret, fretContent.substring(0, fretContent.length-1));
+                //this.fretNumbers[this.selectedFret] = fretContent.substring(0, fretContent.length-1);
             }
             else  {
                  
-                if(this.validFrets.indexOf(event.key) == -1)
+                if(this.validFrets.indexOf(event.key) == -1 || fretContent.length >=2)
                     return;
 
-                this.fretText[this.selectedFret] += event.key.toString()
+                //let fretNumber = this.fretNumbers[this.selectedFret] + event.key.toString();
+                this.fretNumberChanged(this.selectedFret, fretContent + event.key.toString());
+             
+               //this.fretNumbers[this.selectedFret] +=  event.key;
 
                 //todo : remove 0 in front
              }
@@ -69,14 +74,15 @@ export default {
         setEditedFret(fretNum) {
 
             this.selectedFret = fretNum;
-            console.log(fretNum-1)
+            console.log('selectedFret = ' + fretNum)
         },
        
     },
      mounted() {
-         for(let i=0;i<this.fretbars-1;i++) {
-            this.fretText[i] = '';
-        }
+
+        //  for(let i=1;i<this.fretbars;i++) {
+        //     this.fretText[i] = '';
+        // }
      }
 }
 </script>
