@@ -1,99 +1,73 @@
 <template>
-<section>
-    <v-layout>
-        <v-flex sm12 lg12> 
-             <input type="text" 
-                    placeholder="Sheet title" 
-                    width="300"
-                    :value="sheet.title" 
-                    class="headline grey--text text--darken-1"
-                    style="width:100%"
-                   />
-        </v-flex>
-    </v-layout>
-    <v-layout>
-        <v-flex sm12 lg12> 
-            <strong>Tuning</strong> {{ sheet.tuning}}
-           
-        </v-flex>
-    </v-layout>
-    <v-layout row wrap>
-        <v-flex xs6 sm6 md4 lg3 v-for="(diagram, index) in sheet.diagrams" :key="`diag${index}`" >
+    <section >
+        <v-layout>
+            <v-flex sm12 lg12> 
+                <!-- <input type="text" 
+                        placeholder="Sheet title" 
+                        width="300"
+                        v-model="sheet.title" 
+                        class="headline grey--text text--darken-1"
+                        style="width:100%"
+                    /> -->
+                 <v-text-field
+                    v-model="sheet.title"
+                    label="Title"
+                     single-line
+                    :disabled="state.edition == false"
+                    dv-show="state.edition"
+                    class="headline"
+                ></v-text-field>  
+                <!-- <label  class="headline" v-show="state.edition == false">{{sheet.title}}</label> -->
+            </v-flex>
+        </v-layout>
 
-            <Diagram :diagram="diagram"
-                     :onDelete="deleteDiagram" 
-                     :fretSpan="sheet.fretSpan"></Diagram>
-        </v-flex>
+        <v-layout>
+            <v-flex sm12 lg12 pb-5> 
+                <span><strong>Tuning</strong> {{ sheet.tuning}}</span>
+                <span class="ml-5" v-if="sheet.author"><strong>Author</strong> {{  sheet.author.name }} </span>
+            </v-flex>
+        </v-layout>
 
-        <v-flex xs3>
-            <v-btn
-                @click="addDiagram()"
-                color="pink"
-                fab
-                dark
-                small
-            >
-                <v-icon>add</v-icon>
-            </v-btn>
-        </v-flex> 
-    </v-layout>
+        <v-layout row wrap>
+            <v-flex xs6 sm6 md4 lg3 
+                    v-for="(diagram, index) in sheet.diagrams" 
+                    :key="`diag${index}`" >
 
+                <Diagram :diagram="diagram"
+                        :onDelete="deleteDiagram" 
+                        :fretSpan="sheet.fretSpan"></Diagram>
+            </v-flex>
 
-    <v-dialog v-model="dialog"
-              max-width="290"
-    >
-    <v-card>
-        
-        <v-card-text>
-        Delete diagram ?
-        </v-card-text>
+            <v-flex xs3 v-if="state.edition">
+                <v-btn
+                    @click="addDiagram()"
+                    color="pink"
+                    fab
+                    dark
+                    small
+                >
+                    <v-icon>add</v-icon>
+                </v-btn>
+            </v-flex> 
+        </v-layout>
 
-        <v-card-actions>
-        <v-spacer></v-spacer>
+        <confirm-dialog :content="`Delete diagram ?`" 
+                        @Submit="confirmDeleteDiag"
+                        @Cancel="dialog = false"
+                        :dialog="dialog"> </confirm-dialog>
 
-        <v-btn
-            color="green darken-1"
-            flat="flat"
-            @click="dialog = false"
-        >
-            No
-        </v-btn>
-
-        <v-btn
-            color="green darken-1"
-            flat="flat"
-            @click="confirmDeleteDiag()"
-        >
-            Yes
-        </v-btn>
-        </v-card-actions>
-    </v-card>
-    </v-dialog>
-
-  
-</section>
+    
+    </section>
 </template>
 
 <script>
 
-function getEmptyDiagram(id) {
-
-    return { id: 'diag_' + id, 
-            number: id, 
-            chordName:'', 
-            notes:[], 
-            fretNumbers: {'1':'', '2':'', '3' : '','4' : '','5':''}
-        };
-}
-
 import Diagram from './Diagram'
-//import Store from '../store.js'
+import ConfirmDialog from './ConfirmDialog'
 
 export default {
 
     name:'Editor',
-
-    //props: ['sheet'],
 
     data() {
 
@@ -115,6 +89,10 @@ export default {
     },
     methods: {
 
+        closeDeleteDiagramDialog() {
+
+            this.dialog = false;
+        },
         confirmDeleteDiag() {
 
             this.dialog = false;
@@ -123,22 +101,13 @@ export default {
             this.selectedDiagram = null;
         },
         deleteDiagram(diagram) {
-
+            
             this.selectedDiagram = diagram;
             this.dialog = true;
-           
         },
         addDiagram() {
-          
-            const count = this.sheet.diagrams.length;
-            let nextDiagId = 1;
-
-            if(count > 0) {
-                nextDiagId = this.sheet.diagrams[count-1].number + 1;
-            }
-            var diagram = getEmptyDiagram(nextDiagId);
             
-            this.$sheetStore.addDiagram(diagram);
+            this.$sheetStore.addEmptyDiagram();
         }
     },
     mounted() {
@@ -148,7 +117,7 @@ export default {
             this.addDiagram();
         }
     },
-    components: { Diagram }
+    components: { Diagram, ConfirmDialog}
 }
 </script>
 

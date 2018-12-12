@@ -1,6 +1,7 @@
 export default {
 
     FRETSPAN_DEFAULT: 5,
+    MAX_FRETSPAN: 7,
     STRINGS: 6,
     TUNING_DEFAULT: 'EADGBE',
     shapeMap : {

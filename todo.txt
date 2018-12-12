@@ -1,2 +1,4 @@
 [] prevent tab key on annotations
 [] use store for current diagram & notes
+[] move confirm dialog to parent app or make a component with slots
+[] when hovering over hotspot display something, maybe a circle

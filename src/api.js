@@ -8,7 +8,7 @@ const ApiProvider = {
 
 export default {
 
-      getSheets() {
+    getSheets() {
 
         const filter = '{"isPrivate" :false}',
               fields = '{ "title":1, "tags":1, "description":1, "author":1, "authorId":1, "isPrivate": 1, "docTitle":1}';
@@ -19,5 +19,15 @@ export default {
     getSheet(id) {
 
        return  axios.get(`${ApiProvider.DIAGS_DB_URL}/${id}?apiKey=${ApiProvider.MONGO_API_KEY}`);
-    }
+    },
+    
+   createSheet(sheet) {
+
+        return axios.post(`${ApiProvider.DIAGS_DB_URL}?apiKey=${ApiProvider.MONGO_API_KEY}`, sheet);
+   },
+
+   updateSheet(sheet) {
+
+     return axios.put(`${ApiProvider.DIAGS_DB_URL}/${sheet._id.$oid}?apiKey=${ApiProvider.MONGO_API_KEY}`, sheet);
+   }
 }

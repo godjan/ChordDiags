@@ -2,7 +2,7 @@
 
     <v-app>
        <v-content>
-         <v-toolbar class="white--text teal accent-4">
+         <v-toolbar class="white--text light-blue ">
             <!-- <v-toolbar-side-icon></v-toolbar-side-icon> -->
             <v-toolbar-title >
               <v-btn flat to="/" class="white--text">TG Chord Diagrams</v-btn>

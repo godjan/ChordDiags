@@ -5,6 +5,7 @@
         <svg width="60" height="150">
 
              <text v-for="fret in fretSpan" 
+              
                   :key="`annot_${fret}`"
                   x="25"  
                   :y="fret * height + height-4" 
@@ -13,6 +14,7 @@
                   class="fretText">{{ fretNumbers[fret] }}</text>
 
             <rect   v-for="fret in fretSpan"
+                v-show="edition"
                     x="15" 
                     :y="(fret) * height"
                     width="30" 
@@ -35,7 +37,7 @@ export default {
 
     name:'FretAnnotations',
 
-    props: ['fretNumbers', 'fretNumberChanged', 'height','fretSpan'],
+    props: ['fretNumbers', 'fretNumberChanged', 'height','fretSpan', 'edition'],
 
     data() {
         return {

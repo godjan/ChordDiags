@@ -6,9 +6,11 @@
                           :fretSpan="fretSpan"
                           :fretNumbers="diagram.fretNumbers"
                           :fretNumberChanged="fretNumberChanged"
+                          :edition="state.edition"
         ></fret-annotations>
 
-        <div  style="float:left">
+        <div style="float:left">
+
             <svg :width="width" :height="height" :id="`fb_${diagId}`" >
                 <g @mouseleave="showShapeAtMouse = false">
 
@@ -47,21 +49,22 @@
                         </template>
                 
                     <path :d="getShapePath(this.activeShape)" 
-                        v-show="showShapeAtMouse"  
+                        v-show="showShapeAtMouse && state.edition"  
                         @click="toggleNote()"
                         class="cursor"
-                        :class="shapeClass(this.activeShape)"/> 
+                        :class="shapeClassCursor(this.activeShape)"/> 
 
                     <path v-for="(item, index) in notes" 
                         :d="getShapePath(item.shape, item.neckPosition)" 
-                        @click="toggleNote()" 
+                        @click="toggleNote() " 
                         :key="`${diagId}_note_${index}`"
                         class="note"
-                        :class="shapeClass(item.shape)"/>
+                        :class="shapeClass(item)"/>
 
                 </g>
             </svg>
         </div>
+       
     </section>
 </template>
 
@@ -85,9 +88,9 @@ export default {
 
     data() {
         return {
-            stringCount: Number(this.strings) || 6,
+            stringCount: Number(this.strings) ||  Config.STRINGS,
             noteWidth: Math.floor(this.width / (Number(this.strings) || Config.STRINGS)),
-            noteHeight: Math.floor(this.height / ((this.fretSpan +1) || Config.FRETSPAN_DEFAULT)),
+            //noteHeight: Math.floor(this.height / (this.fretSpan + 1)),
             showShapeAtMouse: false,
             neckPosition: { fret: 0, string: 0 },
             state: this.$sheetStore.state
@@ -95,6 +98,9 @@ export default {
     },  
     computed: {
 
+        noteHeight() {
+            return Math.floor(this.height / (this.fretSpan + 1));
+        },
         diagram() {
 
             return this.$sheetStore.getDiagram(this.diagId);
@@ -136,13 +142,16 @@ export default {
         },
         
         toggleNote() {
-         
+            
+            if(!this.state.edition)
+                 return;
+
             var noteIndex = this.notes.findIndex(n => n.neckPosition.fret == this.neckPosition.fret && 
                                                      n.neckPosition.string == this.neckPosition.string);
-
+            let noteExists = noteIndex > -1;
             //console.log(`toggling at ${JSON.stringify(this.neckPosition)}`)
            
-            if(noteIndex == -1) {
+            if(!noteExists) {
 
                 this.$sheetStore.addNote(this.diagId,
                                         { neckPosition: this.neckPosition,
@@ -152,13 +161,18 @@ export default {
             else {
 
                  if(this.notes[noteIndex].shape != this.activeShape) {
+                        
+                         this.$sheetStore.addNote(this.diagId,
+                                                { neckPosition: this.neckPosition,
+                                                shape: this.activeShape
+                                                });
 
-                        this.$sheetStore.updateNote(this.diagId, 
-                                                    noteIndex,
-                                                    { 
-                                                      neckPosition: this.neckPosition,
-                                                      shape: this.activeShape
-                                                    }); 
+                        // this.$sheetStore.updateNote(this.diagId, 
+                        //                             noteIndex,
+                        //                             { 
+                        //                               neckPosition: this.neckPosition,
+                        //                               shape: this.activeShape
+                        //                             }); 
                  }
                  else {
                      this.$sheetStore.deleteNote(this.diagId, noteIndex);   
@@ -191,14 +205,15 @@ export default {
         },
         getCirclePath(neckPos) {
 
-            const startX = this.widthScale.quarter + (neckPos.string-1) * this.noteWidth -2;
+            const startX = this.widthScale.quarter + (neckPos.string-1) * this.noteWidth ;
             const startY = (this.noteHeight/2) + ((neckPos.fret) * this.noteHeight);
 
-            const third = this.widthScale.third;
-            const twoThirds = this.widthScale.twoThirds;
+            const third = this.widthScale.third*0.9 ;
+            const twoThirds = third * 2; //this.widthScale.twoThirds*0.9;
 
             return `M${startX},${startY} 
-                    a${third},${third} 0 1,0 ${twoThirds},0a${third},${third} 0 1,0 -${twoThirds},0`;
+                    a${third},${third} 0 1,0 ${twoThirds},0
+                    a${third},${third} 0 1,0 -${twoThirds},0`;
         },
         getSquarePath(neckPos) {
 
@@ -214,9 +229,9 @@ export default {
         },
         getCrossPath(neckPos) {
 
-            const twoThirds = this.widthScale.twoThirds;
-            const startX = this.widthScale.quarter + (neckPos.string-1) * this.noteWidth -2;
-            const startY = (this.noteHeight/2) + ((neckPos.fret) * this.noteHeight) - this.widthScale.third
+            const twoThirds = this.widthScale.twoThirds+2;
+            const startX = this.widthScale.quarter + (neckPos.string-1) * this.noteWidth -3;
+            const startY = (this.noteHeight/2) + ((neckPos.fret) * this.noteHeight) - this.widthScale.third-1
 
              var p =  `M${startX},${startY} 
                         ${startX + twoThirds},${startY + twoThirds} 
@@ -228,7 +243,7 @@ export default {
             
             const topFret = ((neckPos.fret) * this.noteHeight);
             const startX = this.getStringX(neckPos.string); // middle
-            const startY = topFret + this.heightScale.quarter;
+            const startY = topFret + this.heightScale.quarter-1;
              
              return `M ${startX},${startY} 
                     ${startX + this.widthScale.third},${topFret + this.noteHeight - (this.heightScale.quarter)+1} 
@@ -240,18 +255,31 @@ export default {
             return ((stringNumber-1) * this.noteWidth) + this.widthScale.half
         },
 
-        getStringBottomY() {
-           
-            return (this.fretSpan +1) * this.noteHeight;
-        },
-
-        shapeClass(shape) {
+        shapeClassCursor(shape) {
             
             if(shape=='square' || shape == 'triangle' || shape == 'cross')
                 return 'nofill';
 
             return ''
         },
+        shapeClass(note) {
+
+            const shape = note.shape;
+            let cl = '';
+
+            if(note.neckPosition.string == this.neckPosition.string && 
+               note.neckPosition.fret == this.neckPosition.fret &&
+               note.shape == this.activeShape
+               ) {
+
+                  cl += ' noteRemovable'; //:  ' noteHovered';      
+            }
+
+            if(shape=='square' || shape == 'triangle' || shape == 'cross')
+                return cl + ' nofill';
+
+            return cl;
+        }
     },
     created() {
       
@@ -277,6 +305,17 @@ export default {
      opacity:1;
     /* fill-opacity: 0; */
 }
+.noteHovered {
+   /* stroke:royalblue;*/
+    stroke-width:2;
+}
+
+.noteRemovable {
+    stroke:crimson;
+    stroke-width:2;
+     fill-opacity: 0; 
+}
+
 .cursor {
    /* fill:hsl(213, 4%, 51%);*/
     fill:rgb(0,0,0);
@@ -293,14 +332,14 @@ export default {
 }
 
 .fret:hover {
-   cursor:none;
+   /*cursor:none;*/
 }
 
 .string {
     fill:rgb(121,0,121);
     stroke-width:1;
     /* stroke:rgb(0,0,0); */
-      stroke:silver;
+    stroke:silver;
     fill-opacity: 0;
 }
 

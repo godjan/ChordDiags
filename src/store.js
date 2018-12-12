@@ -1,3 +1,6 @@
+import Config from './config.js'
+import ApiService from './api.js'
+
 class SheetStore
  {
      constructor() {
@@ -9,6 +12,47 @@ class SheetStore
          }
      }
 
+     loadSheets() {
+         
+        return ApiService.getSheets();
+     }
+
+     loadSheet(id) {
+
+        return ApiService.getSheet(id);
+     }
+
+
+     saveSheet() {
+        
+        if(this.state.sheet._id) {
+
+            return ApiService.updateSheet(this.state.sheet)
+        }
+        return ApiService.createSheet(this.state.sheet)
+     }
+
+    
+     createEmptySheet() {
+
+        this.state.sheet = this.getEmptySheet();
+     }
+
+     getEmptySheet() {
+
+        return { id: 0, 
+                fretSpan: Config.FRETSPAN_DEFAULT, 
+                tuning: Config.TUNING_DEFAULT,  
+                version: 1, 
+                author:{ name:'', id:''},
+                isPrivate:true,
+                title: '', 
+                subtitle:'',
+                description:'', 
+                tags: '',
+                diagrams: []
+        }
+    }
      setSheet(sheet) {
          this.state.sheet = sheet;
      }
@@ -22,10 +66,32 @@ class SheetStore
         return this.state.sheet.diagrams.find(d => d.id == id);
      }
 
+     addEmptyDiagram() {
+
+        const count = this.state.sheet.diagrams.length;
+        let nextDiagId = 1;
+
+        if(count > 0) {
+            nextDiagId = this.state.sheet.diagrams[count-1].number + 1;
+        }
+     
+        this.addDiagram(this.getEmptyDiagram(nextDiagId));
+     }
+
 
      addDiagram(diagram) {
         this.state.sheet.diagrams.push(diagram)
      }
+
+     getEmptyDiagram(id) {
+
+        return { id: 'diag_' + id, 
+                number: id, 
+                chordName:'', 
+                notes:[], 
+                fretNumbers: {'1':'', '2':'', '3' : '','4' : '','5':'','6':'','7':''}
+            };
+    }
 
      deleteDiagram(diagram) {
 

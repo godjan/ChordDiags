@@ -17,7 +17,7 @@
                                 
                                 <td> <router-link :to="`/sheet/${props.item._id.$oid}`">{{ props.item.title }}</router-link></td>
                                 <td >{{ props.item.description }}</td>
-                                <td >{{ props.item.author }}</td>
+                                <td >{{ props.item.author.name }}</td>
                             
                             </template>
                         </v-data-table>
@@ -46,32 +46,33 @@
 
 <script>
 
-import ApiService from '../api.js'
-
 export default {
+
   name: "Home",
+
   methods: {},
+
   data() {
+
     return {
-        tunes: [],
-         headers: [
-         
-          { text: 'Title', value: 'title' },
-          { text: 'Description', value: 'description',sortable: false },
-          { text: 'Author', value: 'author' },
-        ],
+            tunes: [],
+            headers: [
+                { text: 'Title', value: 'title' },
+                { text: 'Description', value: 'description',sortable: false },
+                { text: 'Author', value: 'author' },
+                ],
     }
   },
   mounted() {
-      ApiService.getSheets()
-                .then((response) => {
-                    console.log(response);
-                    this.tunes = response.data;
-                })
-                .catch((error) => { 
-                    console.log(error);
-                    
-                })
+      
+      this.$sheetStore.loadSheets()
+                    .then((response) => {
+                        console.log(response);
+                        this.tunes = response.data;
+                    })
+                    .catch((error) => { 
+                        console.log(error);
+                    })
   }
 };
 </script>
