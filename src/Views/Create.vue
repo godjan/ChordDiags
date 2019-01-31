@@ -5,8 +5,9 @@
             <v-flex xs2>
                 <!-- <v-btn flat color="info"><v-icon>add</v-icon>New sheet</v-btn> -->
                 
-                <v-switch
-                        :label="state.edition ? 'Edition' : 'View'"
+                 <v-switch
+                        :label="state.edition ? 'Edition ON' : 'Edition OFF'"
+                        :color="state.edition ? 'success' : ''"
                         v-model="state.edition"
                     > 
                 </v-switch>
@@ -89,12 +90,13 @@ export default {
     
     props:[],
 
-    components: { Editor, ConfirmDialog, SheetDetailsDialog},
+    components: { Editor, ConfirmDialog, SheetDetailsDialog },
 
     data() {
 
         return {
-           range: Array.from(new Array(Config.MAX_FRETSPAN), (val, index)=>index + 1), 
+            
+           range: Array.from(new Array(Config.MAX_FRETSPAN), (val, index) => index + 1), 
            state: this.$sheetStore.state,
            deleteSheetDialog: false,
            detailsDialog: false

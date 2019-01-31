@@ -147,7 +147,8 @@ export default {
                  return;
 
             var noteIndex = this.notes.findIndex(n => n.neckPosition.fret == this.neckPosition.fret && 
-                                                     n.neckPosition.string == this.neckPosition.string);
+                                                     n.neckPosition.string == this.neckPosition.string &&
+                                                     n.shape == this.activeShape);
             let noteExists = noteIndex > -1;
             //console.log(`toggling at ${JSON.stringify(this.neckPosition)}`)
            
@@ -163,9 +164,10 @@ export default {
                  if(this.notes[noteIndex].shape != this.activeShape) {
                         
                          this.$sheetStore.addNote(this.diagId,
-                                                { neckPosition: this.neckPosition,
-                                                shape: this.activeShape
-                                                });
+                                                    { 
+                                                        neckPosition: this.neckPosition,
+                                                        shape: this.activeShape
+                                                    });
 
                         // this.$sheetStore.updateNote(this.diagId, 
                         //                             noteIndex,
@@ -262,6 +264,7 @@ export default {
 
             return ''
         },
+
         shapeClass(note) {
 
             const shape = note.shape;

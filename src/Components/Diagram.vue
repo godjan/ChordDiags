@@ -1,19 +1,34 @@
 <template>
 
 <section>
-    <!-- <v-card -->       
-        <v-toolbar dense flat  @mouseover="showmenu = true" @mouseleave="showmenu = false" v-show="state.edition">
-            <input class="title active" 
+    <!-- <v-card -->
+        <p class="title"
+           style="margin-left:27%"
+           v-show="state.edition == false">{{diagram.chordName}}
+        </p> 
+
+        <v-toolbar dense flat  
+                   @mouseover="showmenu = true" 
+                   @mouseleave="showmenu = false" 
+                   v-show="state.edition">
+
+            <input class="title active ml-5" 
                    type="text" 
                    placeholder="Chord" 
                    title="Chord name"
-                   style="width:50%"
+                   style="width:40%"
                    v-model="diagram.chordName"/>
                    
             <v-spacer></v-spacer>
 
             <v-toolbar-items v-show="showmenu">
-                <v-btn icon flat @click="onDelete(diagram)"><v-icon small color="red">clear</v-icon></v-btn>
+                 
+                    <v-btn icon flat @click="onDelete(diagram)">
+                         <v-tooltip top>
+                        <v-icon size="13" color="red" slot="activator">clear</v-icon>
+                        <span>Delete chord</span>      </v-tooltip>
+                    </v-btn>
+           
 
                 <v-menu bottom left>
                     <v-btn  slot="activator" icon>
@@ -33,10 +48,10 @@
             </v-toolbar-items>
         </v-toolbar>
         <!--v-card-text class="px-0"-->
-            <v-container  text-center-xs style="padding:5px">
+            <v-container text-center-xs class="mb-4" style="padding:5px">
                 <v-layout row>
                    
-                    <span style="margin-top:15px">   
+                    <span :class="{ 'mt-3' : state.edition}">   
                         <fretboard :diagId="diagram.id"
                                    :width="150" 
                                    :height="140"
@@ -46,26 +61,27 @@
                                   ></fretboard>
                     </span>
                     <span v-if="state.edition" class="mt-3">
-                  
+
+                       
                         <v-btn-toggle v-model="toggle_one" mandatory class="ml-2">
-                            <v-icon size="17" class="mb-1" @click="setShape('dot')">fas fa-circle</v-icon>
-                            <v-icon size="18" class="mb-1" @click="setShape('cross')"> fa-times</v-icon>
-                            <v-icon size="17" class="mb-1" @click="setShape('square')">check_box_outline_blank</v-icon>
-                            <a  @click="setShape('triangle')">
-                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-triangle" width='15' height='15'>
-                                    <path d="M 9,1 15,13 3,13 z"/>
+
+                            <v-icon size="17" class="mb-1 icon-hovered" @click="setShape('dot')" 
+                                    :color="activeShape == 'dot' ? 'info' : ''">fas fa-circle</v-icon>
+
+                            <v-icon size="18" class="mb-1 icon-hovered" @click="setShape('cross')" 
+                                   :color="activeShape == 'cross' ? 'info' : ''"> fa-times</v-icon>
+
+                            <v-icon size="17" class="mb-1 icon-hovered" @click="setShape('square')" 
+                                   :color="activeShape == 'square' ? 'info' : ''">check_box_outline_blank</v-icon>
+                            
+                            <a  @click="setShape('triangle')"  :color="activeShape == 'square' ? 'info' : ''">
+                                <svg  class="svg-triangle" width='15' height='15'>
+                                    <path id="trg" d="M 8.5,1 14,13 3,13 z"  :stroke="activeShape == 'triangle' ? '#03A9F4' : '#757575'" stroke-width="2"/>
                                 </svg>
                             </a>
-                            <v-icon size="17" class="mt-1">check_box_outline_blank</v-icon>
-                            <!-- <v-btn flat icon @click="setShape('dot')"><v-icon size="17" >fas fa-circle</v-icon></v-btn>
-                            <v-btn flat icon @click="setShape('cross')"><v-icon size="18"> fa-times</v-icon></v-btn>
-                            <v-btn flat icon @click="setShape('square')"><v-icon size="17">check_box_outline_blank</v-icon></v-btn>
-                            <v-btn flat icon @click="setShape('triangle')">
-                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-triangle" width='15' height='15'>
-                                    <path d="M 7.5,0 15,13 0,13 z"/>
-                                </svg>
-                            </v-btn>
-                            <v-btn flat icon @click="setShape('square')"><v-icon size="17">check_box_outline_blank</v-icon></v-btn> -->
+                          
+                            <v-icon size="17" class="mt-1 icon-hovered" @click="setShape('square')">check_box_outline_blank</v-icon>
+                       
                         
                         </v-btn-toggle>
                     
@@ -158,9 +174,32 @@ export default {
 
 
 .svg-triangle {
-     fill-opacity: 0; 
-     stroke:black;
+     fill-opacity: 0;     
 }
+path{
+   
+   
+}
+path:hover{
+   
+    stroke:#03A9F4;
+}
+
+/* path:hover {
+  stroke:#03A9F4;
+  fill:none;
+  pointer-events:all;
+} */
+
+.icon-hovered:hover
+{
+    color:rgb(33,150,243);
+}
+/* svg#but {
+  height: 50px;
+  width: 50px;
+} */
+
 </style>
 
 

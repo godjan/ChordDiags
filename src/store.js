@@ -1,9 +1,10 @@
 import Config from './config.js'
 import ApiService from './api.js'
 
-class SheetStore
+ class SheetStore
  {
      constructor() {
+
          this.state = {
              sheet: {
                  diagrams:[]
@@ -22,7 +23,6 @@ class SheetStore
         return ApiService.getSheet(id);
      }
 
-
      saveSheet() {
         
         if(this.state.sheet._id) {
@@ -32,7 +32,6 @@ class SheetStore
         return ApiService.createSheet(this.state.sheet)
      }
 
-    
      createEmptySheet() {
 
         this.state.sheet = this.getEmptySheet();
@@ -54,10 +53,12 @@ class SheetStore
         }
     }
      setSheet(sheet) {
+
          this.state.sheet = sheet;
      }
 
      setDiagrams(diags) {
+
          this.state.sheet.diagrams = diags;
      }
 
@@ -72,6 +73,7 @@ class SheetStore
         let nextDiagId = 1;
 
         if(count > 0) {
+
             nextDiagId = this.state.sheet.diagrams[count-1].number + 1;
         }
      
@@ -80,6 +82,7 @@ class SheetStore
 
 
      addDiagram(diagram) {
+        
         this.state.sheet.diagrams.push(diagram)
      }
 

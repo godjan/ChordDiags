@@ -12,7 +12,7 @@
                  <v-text-field
                     v-model="sheet.title"
                     label="Title"
-                     single-line
+                    single-line
                     :disabled="state.edition == false"
                     dv-show="state.edition"
                     class="headline"

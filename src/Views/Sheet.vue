@@ -17,7 +17,8 @@
              <v-flex xs2>
                 <!-- <v-btn flat color="info"><v-icon>add</v-icon>New sheet</v-btn> -->
                 <v-switch
-                        :label="state.edition ? 'Edition' : 'View'"
+                        :label="state.edition ? 'Edition ON' : 'Edition OFF'"
+                        :color="state.edition ? 'success' : ''"
                         v-model="state.edition"
                     > 
                 </v-switch>
@@ -32,7 +33,7 @@
 
             
             <v-flex xs12>
-                <v-toolbar>
+                <v-toolbar  v-show="state.edition">
                      <span style="width:80px">
                         <v-select
                             :items="range"
@@ -163,6 +164,9 @@ export default {
                         //this.sheet = response.data;
                         this.loading = false;
                         this.state.sheet = response.data;
+                    })
+                    .catch((err) => {
+                         this.$router.push('/');
                     })
         }
         else {

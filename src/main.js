@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
 import router from "./router.js"
-import storePlugin from './storePlugin'
+import storePlugin from "./storePlugin"
 
 Vue.use(storePlugin)
 
