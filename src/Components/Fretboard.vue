@@ -155,7 +155,8 @@ export default {
             if(!noteExists) {
 
                 this.$sheetStore.addNote(this.diagId,
-                                        { neckPosition: this.neckPosition,
+                                        { 
+                                          neckPosition: this.neckPosition,
                                           shape: this.activeShape
                                         });
             }
@@ -168,16 +169,9 @@ export default {
                                                         neckPosition: this.neckPosition,
                                                         shape: this.activeShape
                                                     });
-
-                        // this.$sheetStore.updateNote(this.diagId, 
-                        //                             noteIndex,
-                        //                             { 
-                        //                               neckPosition: this.neckPosition,
-                        //                               shape: this.activeShape
-                        //                             }); 
                  }
                  else {
-                     this.$sheetStore.deleteNote(this.diagId, noteIndex);   
+                     this.$sheetStore.deleteNoteByIndex(this.diagId, noteIndex);   
                  }                                  
             }
         },

@@ -8,6 +8,7 @@ import Sheet from "./Views/Sheet"
 Vue.use(VueRouter);
 
 export default new VueRouter({
+  
   mode: "history",
 
   routes: [

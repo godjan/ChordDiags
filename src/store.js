@@ -1,162 +1,185 @@
 import Config from './config.js'
 import ApiService from './api.js'
+import HistoryService from './history.js'
 
  class SheetStore
  {
-     constructor() {
+   constructor() {
 
-         this.state = {
-             sheet: {
-                 diagrams:[]
-             },
-             edition: false
-         }
-     }
+      this.state = {
+            sheet: {
+               diagrams:[]
+            },
+            edition: false,
 
-     loadSheets() {
-         
-        return ApiService.getSheets();
-     }
+           // historyService: HistoryService
+      }
 
-     loadSheet(id) {
+   }
 
-        return ApiService.getSheet(id);
-     }
+   loadSheets() {
+      
+      return ApiService.getSheets();
+   }
 
-     saveSheet() {
-        
-        if(this.state.sheet._id) {
+   loadSheet(id) {
 
-            return ApiService.updateSheet(this.state.sheet)
-        }
-        return ApiService.createSheet(this.state.sheet)
-     }
+      return ApiService.getSheet(id);
+   }
 
-     createEmptySheet() {
+   saveSheet() {
+      
+      if(this.state.sheet._id) {
 
-        this.state.sheet = this.getEmptySheet();
-     }
+         return ApiService.updateSheet(this.state.sheet)
+      }
+      return ApiService.createSheet(this.state.sheet)
+   }
 
-     getEmptySheet() {
+   createEmptySheet() {
 
-        return { id: 0, 
-                fretSpan: Config.FRETSPAN_DEFAULT, 
-                tuning: Config.TUNING_DEFAULT,  
-                version: 1, 
-                author:{ name:'', id:''},
-                isPrivate:true,
-                title: '', 
-                subtitle:'',
-                description:'', 
-                tags: '',
-                diagrams: []
-        }
-    }
-     setSheet(sheet) {
+      this.state.sheet = this.getEmptySheet();
+   }
 
-         this.state.sheet = sheet;
-     }
+   getEmptySheet() {
 
-     setDiagrams(diags) {
+      return { id: 0, 
+               fretSpan: Config.FRETSPAN_DEFAULT, 
+               tuning: Config.TUNING_DEFAULT,  
+               version: 1, 
+               author:{ name:'', id:''},
+               isPrivate:true,
+               title: '', 
+               subtitle:'',
+               description:'', 
+               tags: '',
+               diagrams: []
+      }
+   }
+   setSheet(sheet) {
 
-         this.state.sheet.diagrams = diags;
-     }
+      this.state.sheet = sheet;
+   }
 
-     getDiagram(id) {
+   setDiagrams(diags) {
 
-        return this.state.sheet.diagrams.find(d => d.id == id);
-     }
+      this.state.sheet.diagrams = diags;
+   }
 
-     addEmptyDiagram() {
+   getDiagram(id) {
 
-        const count = this.state.sheet.diagrams.length;
-        let nextDiagId = 1;
+      return this.state.sheet.diagrams.find(d => d.id == id);
+   }
 
-        if(count > 0) {
+   addEmptyDiagram() {
 
-            nextDiagId = this.state.sheet.diagrams[count-1].number + 1;
-        }
-     
-        this.addDiagram(this.getEmptyDiagram(nextDiagId));
-     }
+      const count = this.state.sheet.diagrams.length;
+      let nextDiagId = 1;
 
+      if(count > 0) {
 
-     addDiagram(diagram) {
-        
-        this.state.sheet.diagrams.push(diagram)
-     }
-
-     getEmptyDiagram(id) {
-
-        return { id: 'diag_' + id, 
-                number: id, 
-                chordName:'', 
-                notes:[], 
-                fretNumbers: {'1':'', '2':'', '3' : '','4' : '','5':'','6':'','7':''}
-            };
-    }
-
-     deleteDiagram(diagram) {
-
-        const index = this.state.sheet.diagrams.indexOf(diagram);
-        this.state.sheet.diagrams.splice(index, 1)
-     }
+         nextDiagId = this.state.sheet.diagrams[count-1].number + 1;
+      }
+   
+      this.addDiagram(this.getEmptyDiagram(nextDiagId));
+   }
 
 
-     updateNote(diagId, index, note) {
+   addDiagram(diagram) {
+      
+      this.state.sheet.diagrams.push(diagram)
+   }
 
-        const diagram = this.getDiagram(diagId);
- 
-        if(diagram == null)
-            return;
-        
-        if(!diagram.notes || diagram.notes.length == 0) {
+   getEmptyDiagram(id) {
 
-            diagram.notes.push(note);
+      return { id: 'diag_' + id, 
+               number: id, 
+               chordName:'', 
+               notes:[], 
+               fretNumbers: {'1':'', '2':'', '3' : '','4' : '','5':'','6':'','7':''}
+         };
+   }
 
-        } else {
+   deleteDiagram(diagram) {
 
-            diagram.notes[index] = note;
-        }
-          
-     }
+      const index = this.state.sheet.diagrams.indexOf(diagram);
+      this.state.sheet.diagrams.splice(index, 1)
+   }
 
-     deleteNote(diagId, noteIndex) {
-        
-        const diagram = this.getDiagram(diagId);
- 
-        if(diagram == null)
-            return;
-        
-        diagram.notes.splice(noteIndex, 1);
+   clearDiagram(diagId) {
 
-     }
+      const diagram = this.getDiagram(diagId);
 
-     deleteNotes(diagId) {
+      diagram.notes = [];
+      diagram.fretNumbers =  {'1':'', '2':'', '3' : '','4' : '','5':''}
+      diagram.chordName = '';
+   }
 
-        const diagram = this.getDiagram(diagId);
+  /*-----------------------------------------NOTES--------------------------------------------------------------*/
+   addNote(diagId, note) {
 
-        diagram.notes = [];
-     }
+      const diagram = this.getDiagram(diagId);
 
-     clearDiagram(diagId) {
+      if(diagram == null)
+         return;
 
-        const diagram = this.getDiagram(diagId);
+      diagram.notes.push(note);
 
-        diagram.notes = [];
-        diagram.fretNumbers =  {'1':'', '2':'', '3' : '','4' : '','5':''}
-        diagram.chordName = '';
-     }
+      HistoryService.add('add', diagId, note)
+   
+   }
 
-     addNote(diagId, note) {
+   updateNote(diagId, index, note) {
 
-        const diagram = this.getDiagram(diagId);
- 
-        if(diagram == null)
-            return;
+      const diagram = this.getDiagram(diagId);
 
-        diagram.notes.push(note)
-     }
+      if(diagram == null)
+         return;
+      
+      if(!diagram.notes || diagram.notes.length == 0) {
+
+         diagram.notes.push(note);
+
+      } else {
+
+         diagram.notes[index] = note;
+      }
+   }
+
+   deleteNoteByIndex(diagId, noteIndex) {
+      
+      const diagram = this.getDiagram(diagId);
+
+      if(diagram == null)
+         return;
+
+      HistoryService.add('delete', diagId, diagram.notes[noteIndex]);
+
+      diagram.notes.splice(noteIndex, 1);
+   }
+
+   deleteNote(diagId, note) {
+
+      const diagram = this.getDiagram(diagId);
+
+      if(diagram == null)
+         return;
+      
+      let noteIndex = diagram.notes.findIndex( n => n.neckPosition.fret == note.neckPosition.fret &&
+                                                    n.neckPosition.string == note.neckPosition.string &&
+                                                    n.shape == note.shape);
+      
+      diagram.notes.splice(noteIndex, 1);
+   }
+
+   deleteNotes(diagId) {
+
+      const diagram = this.getDiagram(diagId);
+
+      diagram.notes = [];
+   }
+
+   
 
      updateFretContent(diagId, fretIndex, newVal) {
 
@@ -169,6 +192,8 @@ import ApiService from './api.js'
         //console.log('store updates fret content for diag# ' + diagId + ' fret ' )
 
      }
+
+    
  }
 
  export default new SheetStore()

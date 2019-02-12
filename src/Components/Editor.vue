@@ -64,6 +64,7 @@
 
 import Diagram from './Diagram'
 import ConfirmDialog from './ConfirmDialog'
+import HistoryService from '../history.js'
 
 export default {
 
@@ -74,7 +75,8 @@ export default {
         return {
             dialog: false,
             selectedDiagram: null,
-            state: this.$sheetStore.state
+            state: this.$sheetStore.state,
+            historyService: HistoryService
         }
     },
     mounted() {
@@ -108,9 +110,38 @@ export default {
         addDiagram() {
             
             this.$sheetStore.addEmptyDiagram();
+        },
+        undo() {
+
+            console.log('Undo')
+       
+            var item = this.historyService.back();
+            
+            if(item && item.action =='add') {
+               
+                this.$sheetStore.deleteNote(item.diagId, item.note);
+            }
+        },
+        redo() {
+
+            console.log('Redo')
+            var action = this.historyService.next();
+            debugger
         }
     },
     mounted() {
+
+        var vm = this;
+
+        window.addEventListener('keyup', function(event) {
+        
+            if (event.ctrlKey) {
+
+            if(event.keyCode == 90) vm.undo();
+            if(event.keyCode == 89) vm.redo();
+            }
+
+        });
 
         if(this.sheet.id == 0) {
 

@@ -1,5 +1,6 @@
 <template>
     <section>
+
     <v-container fluid grid-list-md >
 
         <v-layout v-show="loading" fill-height>
@@ -24,7 +25,8 @@
                 </v-switch>
             </v-flex>
             
-            <v-flex xs6>               
+            <v-flex xs6 class="mt-2">   
+                
             </v-flex>
             <v-flex xs4 class="text-xs-right">
                 
@@ -41,13 +43,25 @@
                             v-model="state.sheet.fretSpan"
                             ></v-select>
                     </span>
+                   
+                    <span class="ml-5" style="width:120px">
+                        <v-tooltip bottom>
+                            <v-btn outline icon small slot="activator"><v-icon size="13">fa-undo</v-icon></v-btn>
+                            <span>Undo</span>
+                        </v-tooltip> 
+                       <v-tooltip bottom>
+                           <v-btn outline icon small slot="activator"><v-icon size="13">fa-redo</v-icon></v-btn> 
+                           <span>Redo</span>   
+                       </v-tooltip> 
+                    </span>  
                     <v-spacer></v-spacer>
-                    <v-tooltip bottom>
+
+                    <!-- <v-tooltip bottom>
                         <v-btn flat small color="primary" slot="activator" @click="detailsDialog = true"> 
                            <v-icon>list_alt</v-icon> Details...
                         </v-btn>
                         <span>Tune settings (Author, Tuning, ...)</span>
-                    </v-tooltip>
+                    </v-tooltip> -->
 
                     <v-tooltip bottom>
                         <v-btn flat color="info"  slot="activator"><v-icon>bookmark</v-icon></v-btn>
@@ -127,6 +141,7 @@ export default {
         }
     },
     methods: {
+      
         saveSheet() {
 
             var self = this;
@@ -150,6 +165,7 @@ export default {
              this.deleteSheetDialog = false;
         }
     },
+   
     created() {
 
         //console.log('Sheet created')
