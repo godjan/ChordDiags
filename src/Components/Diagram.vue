@@ -17,7 +17,8 @@
                    placeholder="Chord" 
                    title="Chord name"
                    style="width:40%"
-                   v-model="diagram.chordName"/>
+                   v-model="diagram.chordName"
+                   @blur="onChordChanged()" />
                    
             <v-spacer></v-spacer>
 
@@ -159,6 +160,11 @@ export default {
         },
         closeDialog() {
             this.diagramDialog = false;
+        },
+
+        onChordChanged() {
+            this.$sheetStore.saveState();
+           
         }
     },
 

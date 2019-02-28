@@ -11,46 +11,65 @@ class HistoryService {
         this.cursor = 0;
     }
     
+    reset() {
 
-    add(action, diagId, note) {
-
-        if(this.cursor > MAX_ELEMENTS-1) {
-
-            this.history.splice(0, 1);
-            this.cursor == MAX_ELEMENTS - 1;
-        }
-        this.history.push({ action : action, diagId: diagId, note: note });
-        this.cursor++;
+        this.history = [];
+        this.cursor = 0;
     }
+
+    add(diagrams) {
+
+        //deep copy
+        let diag = JSON.parse(JSON.stringify(diagrams));
+        
+        if(this.history.length > 1) {
+            this.history.splice(this.cursor + 1);
+        }
+        this.history.push(diag);
+        this.cursor = this.history.length-1;
+    }
+
+    // add(action, diagId, note) {
+
+    //     if(this.cursor > MAX_ELEMENTS-1) {
+
+    //         this.history.splice(0, 1);
+    //         this.cursor == MAX_ELEMENTS - 1;
+    //     }
+    //     this.history.push({ action : action, diagId: diagId, note: note });
+    //     this.cursor = this.history.length-1;
+    //     console.log('added at ' + this.cursor)
+    // }
 
     pop() {
 
        return this.history.splice(-1,1)
     }
 
-    next() {
+    redo() {
+
+        if(this.cursor + 1 ==  this.history.length )
+           return null;
 
         this.cursor++;
+        if(this.history.length == 1)
+            this.cursor = 0;
 
-        if(this.cursor >  MAX_ELEMENTS -1)
-           return null;
-        
+        console.log('cursor =' + this.cursor)
+
         return this.history[this.cursor];
     }
 
-    back() {
+    undo() {
 
-        //let cursor = this.cursor -1;
-       
-       
-        // if(cursor < 0)
-        //    return null;
-        debugger
-        if(this.cursor < 0) return null;
+        if(this.cursor-1 < 0) return null;
 
-        let action =  this.history[this.cursor];
         this.cursor--;
 
+       console.log('cursor =' + this.cursor)
+       
+        let action =  this.history[this.cursor];
+        
         return action;
     }
 

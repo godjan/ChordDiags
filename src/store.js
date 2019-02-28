@@ -24,7 +24,13 @@ import HistoryService from './history.js'
 
    loadSheet(id) {
 
-      return ApiService.getSheet(id);
+      return ApiService.getSheet(id)
+                       .then((response) => {
+
+                           HistoryService.reset();
+                           HistoryService.add(response.data.diagrams);
+                           return response;
+                       });
    }
 
    saveSheet() {
@@ -38,6 +44,7 @@ import HistoryService from './history.js'
 
    createEmptySheet() {
 
+      HistoryService.reset();
       this.state.sheet = this.getEmptySheet();
    }
 
@@ -56,6 +63,14 @@ import HistoryService from './history.js'
                diagrams: []
       }
    }
+
+   createNewSheet() {
+      
+      this.createEmptySheet();
+      this.addEmptyDiagram();     
+      //HistoryService.add(this.state.sheet.diagrams);  
+   }
+
    setSheet(sheet) {
 
       this.state.sheet = sheet;
@@ -87,7 +102,8 @@ import HistoryService from './history.js'
 
    addDiagram(diagram) {
       
-      this.state.sheet.diagrams.push(diagram)
+      this.state.sheet.diagrams.push(diagram);
+      HistoryService.add(this.state.sheet.diagrams);
    }
 
    getEmptyDiagram(id) {
@@ -103,7 +119,8 @@ import HistoryService from './history.js'
    deleteDiagram(diagram) {
 
       const index = this.state.sheet.diagrams.indexOf(diagram);
-      this.state.sheet.diagrams.splice(index, 1)
+      this.state.sheet.diagrams.splice(index, 1);
+      HistoryService.add(this.state.sheet.diagrams);
    }
 
    clearDiagram(diagId) {
@@ -124,9 +141,9 @@ import HistoryService from './history.js'
          return;
 
       diagram.notes.push(note);
-
-      HistoryService.add('add', diagId, note)
-   
+      HistoryService.add(this.state.sheet.diagrams);
+      //HistoryService.add('ADD_NOTE', diagId, note)
+      
    }
 
    updateNote(diagId, index, note) {
@@ -153,9 +170,10 @@ import HistoryService from './history.js'
       if(diagram == null)
          return;
 
-      HistoryService.add('delete', diagId, diagram.notes[noteIndex]);
-
+      //HistoryService.add('DELETE_NOTE', diagId, diagram.notes[noteIndex]);
+   
       diagram.notes.splice(noteIndex, 1);
+      HistoryService.add(this.state.sheet.diagrams);
    }
 
    deleteNote(diagId, note) {
@@ -168,7 +186,9 @@ import HistoryService from './history.js'
       let noteIndex = diagram.notes.findIndex( n => n.neckPosition.fret == note.neckPosition.fret &&
                                                     n.neckPosition.string == note.neckPosition.string &&
                                                     n.shape == note.shape);
-      
+
+      HistoryService.add('DELETE_NOTE', diagId, diagram.notes[noteIndex]);
+
       diagram.notes.splice(noteIndex, 1);
    }
 
@@ -180,19 +200,57 @@ import HistoryService from './history.js'
    }
 
    
+   updateFretContent(diagId, fretIndex, newVal) {
 
-     updateFretContent(diagId, fretIndex, newVal) {
+      const diagram = this.getDiagram(diagId);
 
-        const diagram = this.getDiagram(diagId);
- 
-        if(diagram == null)
-            return;
+      if(diagram == null)
+         return;
 
-       diagram.fretNumbers[fretIndex] = newVal;
-        //console.log('store updates fret content for diag# ' + diagId + ' fret ' )
+      diagram.fretNumbers[fretIndex] = newVal;
+      //console.log('store updates fret content for diag# ' + diagId + ' fret ' )
 
-     }
+   }
+   
+   // triggers a state save
+   saveState() {
+      
+      HistoryService.add(this.state.sheet.diagrams);
+   }
 
+   undo() {
+
+      var state = HistoryService.undo();
+         
+      if(!state) return;
+
+      //executeAction(item);
+      debugger
+      this.state.sheet.diagrams = JSON.parse(JSON.stringify(state));
+   }
+
+   redo() {
+
+      let state = HistoryService.redo();
+
+      if(!state) return;
+
+      this.state.sheet.diagrams = JSON.parse(JSON.stringify(state));
+      //executeAction(item);
+   }
+
+   executeAction(action) {
+
+      if(item.action =='ADD_NOTE') {
+         
+         this.deleteNote(item.diagId, item.note);
+
+       } 
+       else if(item.action == 'DELETE_NOTE') {
+         
+         this.addNote(item.diagId, item.note)
+      }
+   }
     
  }
 

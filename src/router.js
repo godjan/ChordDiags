@@ -25,7 +25,7 @@ export default new VueRouter({
       component: Create
     },
     {
-      path:"/sheet/:id",
+      path:"/sheet/:id?",
       component: Sheet
     },
     {

@@ -64,7 +64,7 @@
 
 import Diagram from './Diagram'
 import ConfirmDialog from './ConfirmDialog'
-import HistoryService from '../history.js'
+// import HistoryService from '../history.js'
 
 export default {
 
@@ -76,7 +76,7 @@ export default {
             dialog: false,
             selectedDiagram: null,
             state: this.$sheetStore.state,
-            historyService: HistoryService
+           // historyService: HistoryService
         }
     },
     mounted() {
@@ -111,43 +111,34 @@ export default {
             
             this.$sheetStore.addEmptyDiagram();
         },
-        undo() {
+        // undo() {
 
-            console.log('Undo')
-       
-            var item = this.historyService.back();
-            
-            if(item && item.action =='add') {
-               
-                this.$sheetStore.deleteNote(item.diagId, item.note);
-            }
-        },
-        redo() {
+        //     this.$sheetStore.undo();
+        // },
+        // redo() {
 
-            console.log('Redo')
-            var action = this.historyService.next();
-            debugger
-        }
-    },
-    mounted() {
+        //     this.$sheetStore.redo();
+        // }
+     },
+    // mounted() {
 
-        var vm = this;
+    //     var vm = this;
 
-        window.addEventListener('keyup', function(event) {
+    //     window.addEventListener('keyup', function(event) {
         
-            if (event.ctrlKey) {
+    //         if (event.ctrlKey) {
 
-            if(event.keyCode == 90) vm.undo();
-            if(event.keyCode == 89) vm.redo();
-            }
+    //         if(event.keyCode == 90) vm.undo();
+    //         if(event.keyCode == 89) vm.redo();
+    //         }
 
-        });
+    //     });
 
-        if(this.sheet.id == 0) {
+    //     if(this.sheet.id == 0) {
 
-            this.addDiagram();
-        }
-    },
+    //         this.addDiagram();
+    //     }
+    // },
     components: { Diagram, ConfirmDialog}
 }
 </script>

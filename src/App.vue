@@ -7,7 +7,7 @@
             <v-toolbar-title >
               <v-btn flat to="/" class="white--text">TG Chord Diagrams</v-btn>
             </v-toolbar-title>
-            <v-btn flat class="white--text" to="/create"> <v-icon>add_circle_outline</v-icon> new sheet</v-btn>
+            <v-btn flat class="white--text" href="/sheet"> <v-icon>add_circle_outline</v-icon> new sheet</v-btn>
             <v-spacer></v-spacer>
             <v-toolbar-items dclass="hidden-sm-and-down">
               <v-btn flat to="/login">Log in</v-btn>

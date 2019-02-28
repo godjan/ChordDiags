@@ -46,11 +46,11 @@
                    
                     <span class="ml-5" style="width:120px">
                         <v-tooltip bottom>
-                            <v-btn outline icon small slot="activator"><v-icon size="13">fa-undo</v-icon></v-btn>
+                            <v-btn outline icon small slot="activator" @click="undo()"><v-icon size="13">fa-undo</v-icon></v-btn>
                             <span>Undo</span>
                         </v-tooltip> 
                        <v-tooltip bottom>
-                           <v-btn outline icon small slot="activator"><v-icon size="13">fa-redo</v-icon></v-btn> 
+                           <v-btn outline icon small slot="activator" @click="redo()"><v-icon size="13">fa-redo</v-icon></v-btn> 
                            <span>Redo</span>   
                        </v-tooltip> 
                     </span>  
@@ -108,7 +108,46 @@
         Close
       </v-btn>
     </v-snackbar>
-   
+    
+    <!-- Title input dialog -->
+    <v-dialog
+      v-model="titleDialog"
+      max-width="290"
+    >
+      <v-card>
+       
+        <v-card-text>
+         Please give a title to your sheet.
+        </v-card-text>
+         <v-card-text>
+            <v-text-field
+                v-model="state.sheet.title"
+                label="Title"
+                required
+            ></v-text-field>
+         </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="titleDialog = false; saveSheet()"
+            :disabled="!state.sheet.title || state.sheet.title.length==0"
+          >
+            Save
+          </v-btn>
+
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="state.sheet.title = '';titleDialog = false"
+          >
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </section>
 </template>
 
@@ -136,6 +175,7 @@ export default {
             state: this.$sheetStore.state,
             deleteSheetDialog: false,
             detailsDialog: false,
+            titleDialog: false,
             snackbar: false,
             range: Array.from(new Array(Config.MAX_FRETSPAN), (val, index)=>index + 1), 
         }
@@ -144,6 +184,11 @@ export default {
       
         saveSheet() {
 
+            if(this.state.sheet.title.length ==0) {
+                // alert('Please enter a title')
+                this.titleDialog = true;
+                return
+            }
             var self = this;
             this.$sheetStore.saveSheet()
                             .then(function (response) {
@@ -163,14 +208,23 @@ export default {
         },
         closeDeleteSheetDialog() {
              this.deleteSheetDialog = false;
+        },
+
+        undo() {
+
+            this.$sheetStore.undo();
+        },
+        redo() {
+
+            this.$sheetStore.redo();
         }
     },
    
     created() {
 
-        //console.log('Sheet created')
+        console.log('Sheet created')
         this.loading = true;
-
+       
         if(this.$route.params.id) {
 
             this.$sheetStore.loadSheet(this.$route.params.id)
@@ -186,9 +240,30 @@ export default {
                     })
         }
         else {
-            this.$sheetStore.createEmptySheet();
+               this.loading = false;
+               this.$sheetStore.createNewSheet();
+         
+               this.state.edition = true;
+        }          
+    },
+     mounted() {
+
+        var vm = this;
+
+        window.addEventListener('keyup', function(event) {
+        
+            if (event.ctrlKey) {
+
+            if(event.keyCode == 90) vm.undo();
+            if(event.keyCode == 89) vm.redo();
+            }
+
+        });
+
+        if(this.sheet.id == 0) {
+
+            this.addDiagram();
         }
-                  
     },
     components: { Editor, ConfirmDialog, SheetDetailsDialog}
 }
