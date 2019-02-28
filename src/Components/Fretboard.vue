@@ -9,7 +9,7 @@
                           :edition="state.edition"
         ></fret-annotations>
 
-        <div style="float:left">
+        <div style="float:left" :style="state.edition ? 'margin-left:10px' : ''">
 
             <svg :width="width" :height="height" :id="`fb_${diagId}`" >
                 <g @mouseleave="showShapeAtMouse = false">

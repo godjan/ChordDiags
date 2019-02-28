@@ -2,22 +2,22 @@
 
     <div @keyup="onEditFretNumber" style="float:left">
      
-        <svg width="60" height="150">
+        <svg :width="edition ? 35 : 25" height="150">
 
              <text v-for="fret in fretSpan" 
               
                   :key="`annot_${fret}`"
-                  x="25"  
+                   :x="edition ? 17 : 11"  
                   :y="fret * height + height-4" 
                   :height="height"
                    @click="setEditedFret(fret)"
                   class="fretText">{{ fretNumbers[fret] }}</text>
 
             <rect   v-for="fret in fretSpan"
-                v-show="edition"
+                    v-show="edition"
                     x="15" 
                     :y="(fret) * height"
-                    width="30" 
+                    width="20" 
                     :height="height"
                     class="fretNum"
                     stroke-dasharray="2,2"

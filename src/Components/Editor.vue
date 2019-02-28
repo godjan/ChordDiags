@@ -29,13 +29,14 @@
         </v-layout>
 
         <v-layout row wrap>
-            <v-flex xs6 sm6 md4 lg3 
+            <v-flex :class="state.edition ? 'xs6 sm6 md4 lg3' : 'xs6 sm4 md3 lg2'" 
                     v-for="(diagram, index) in sheet.diagrams" 
                     :key="`diag${index}`" >
 
                 <Diagram :diagram="diagram"
                         :onDelete="deleteDiagram" 
                         :fretSpan="sheet.fretSpan"></Diagram>
+
             </v-flex>
 
             <v-flex xs3 v-if="state.edition">

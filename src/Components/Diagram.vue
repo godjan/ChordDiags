@@ -3,7 +3,8 @@
 <section>
     <!-- <v-card -->
         <p class="title"
-           style="margin-left:27%"
+          
+           :style="state.edition ? 'margin-left:27%' : 'margin-left:30%'"
            v-show="state.edition == false">{{diagram.chordName}}
         </p> 
 
@@ -87,7 +88,18 @@
                         </v-btn-toggle>
                     
                     </span>
+                    
                 </v-layout>
+                 <v-layout row>
+                     <input :disabled="!state.edition"
+                            class="ml-4 diagram-comments" 
+                            :class="state.edition ? 'input-edition' : ''"
+                            type="text" 
+                            :placeholder="state.edition ? 'add comment' : ''" 
+                            title="comments"
+                            estyle="width:100%"
+                            v-model="diagram.comments"
+                 />   </v-layout>
             </v-container>
       
           
@@ -205,6 +217,34 @@ path:hover{
   height: 50px;
   width: 50px;
 } */
+
+.diagram-comments {
+    width: 90%;
+    /* margin-left: 15px; */
+}
+
+.input-edition {
+  
+     border: dashed #e2e2;
+}
+
+/* .diagram-comments::placeholder { 
+ 
+  opacity: 0.5
+} */
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  opacity: 0.5
+}
+::-moz-placeholder { /* Firefox 19+ */
+  opacity: 0.5
+}
+:-ms-input-placeholder { /* IE 10+ */
+  opacity: 0.5
+}
+:-moz-placeholder { /* Firefox 18- */
+  opacity: 0.5
+}
 
 </style>
 
