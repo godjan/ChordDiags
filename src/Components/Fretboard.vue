@@ -72,12 +72,17 @@
 
 import Config from '../config.js'
 import FretAnnotations from './FretAnnotations'
+import Shapes from '../shapes.js'
+
+
+let ShapeRender = null;
 
 export default {
 
     name:'Fretboard',
 
     props:{
+
         diagId: String,
         fretSpan: Number,
         strings: Number,
@@ -87,10 +92,11 @@ export default {
     },
 
     data() {
+
         return {
+
             stringCount: Number(this.strings) ||  Config.STRINGS,
             noteWidth: Math.floor(this.width / (Number(this.strings) || Config.STRINGS)),
-            //noteHeight: Math.floor(this.height / (this.fretSpan + 1)),
             showShapeAtMouse: false,
             neckPosition: { fret: 0, string: 0 },
             state: this.$sheetStore.state
@@ -99,6 +105,7 @@ export default {
     computed: {
 
         noteHeight() {
+
             return Math.floor(this.height / (this.fretSpan + 1));
         },
         diagram() {
@@ -116,22 +123,6 @@ export default {
         fretbars() {
 
             return this.fretSpan + 1;
-        },
-        widthScale() {
-
-            return { quarter: Math.floor(this.noteWidth / 4),
-                     half: Math.floor(this.noteWidth / 2),
-                     third: Math.floor(this.noteWidth / 3),
-                     twoThirds: Math.floor(this.noteWidth / 3) *  2
-            }
-        },
-        heightScale() {
-
-             return { quarter: Math.floor(this.noteHeight / 4),
-                     half: Math.floor(this.noteHeight / 2),
-                     third: Math.floor(this.noteHeight / 3),
-                     twoThirds: Math.floor(this.noteHeight / 3) * 2 
-            }
         }
     },
     methods: {
@@ -177,6 +168,9 @@ export default {
         },
         over(fret, string) {
 
+             if(!this.state.edition)
+                 return;
+
             this.showShapeAtMouse = true;
             this.neckPosition = { fret: fret-1, string: string };
             //console.log('over ' + note)
@@ -186,69 +180,23 @@ export default {
             const _pos = neckPos || this.neckPosition;
 
             if(shape== 'dot')
-                return this.getCirclePath(_pos);
+                return ShapeRender.getCirclePath(_pos);
 
             if(shape == 'square')
-                return this.getSquarePath(_pos);
+                return ShapeRender.getSquarePath(_pos);
 
             if(shape == 'triangle')
-                 return this.getTrianglePath(_pos);
+                 return ShapeRender.getTrianglePath(_pos);
             
             if(shape == 'cross')
-                 return this.getCrossPath(_pos);
+                 return ShapeRender.getCrossPath(_pos);
 
             return '';
         },
-        getCirclePath(neckPos) {
-
-            const startX = this.widthScale.quarter + (neckPos.string-1) * this.noteWidth ;
-            const startY = (this.noteHeight/2) + ((neckPos.fret) * this.noteHeight);
-
-            const third = this.widthScale.third*0.9 ;
-            const twoThirds = third * 2; //this.widthScale.twoThirds*0.9;
-
-            return `M${startX},${startY} 
-                    a${third},${third} 0 1,0 ${twoThirds},0
-                    a${third},${third} 0 1,0 -${twoThirds},0`;
-        },
-        getSquarePath(neckPos) {
-
-            const twoThirds = this.widthScale.twoThirds;
-            const startX = this.widthScale.quarter + (neckPos.string-1) * this.noteWidth -2
-            const startY = (this.noteHeight/2) + ((neckPos.fret) * this.noteHeight) - this.widthScale.third
-          
-            var p =  `M${startX},${startY} 
-                     ${startX + twoThirds },${startY} 
-                     ${startX + twoThirds},${startY + twoThirds} 
-                     ${startX},${startY + twoThirds} z`;
-            return p;
-        },
-        getCrossPath(neckPos) {
-
-            const twoThirds = this.widthScale.twoThirds+2;
-            const startX = this.widthScale.quarter + (neckPos.string-1) * this.noteWidth -3;
-            const startY = (this.noteHeight/2) + ((neckPos.fret) * this.noteHeight) - this.widthScale.third-1
-
-             var p =  `M${startX},${startY} 
-                        ${startX + twoThirds},${startY + twoThirds} 
-                       M${startX + twoThirds},${startY} 
-                        ${startX},${startY + twoThirds} z`;
-             return p;
-        },
-        getTrianglePath(neckPos) {
-            
-            const topFret = ((neckPos.fret) * this.noteHeight);
-            const startX = this.getStringX(neckPos.string); // middle
-            const startY = topFret + this.heightScale.quarter-1;
-             
-             return `M ${startX},${startY} 
-                    ${startX + this.widthScale.third},${topFret + this.noteHeight - (this.heightScale.quarter)+1} 
-                    ${startX - this.widthScale.third},${topFret + this.noteHeight - (this.heightScale.quarter)+1} z`;
-
-        },
+       
         getStringX(stringNumber) {
            
-            return ((stringNumber-1) * this.noteWidth) + this.widthScale.half
+            return ((stringNumber-1) * this.noteWidth) + Math.floor(this.noteWidth / 2); 
         },
 
         shapeClassCursor(shape) {
@@ -279,9 +227,8 @@ export default {
         }
     },
     created() {
-      
-        //this.diagram = this.$sheetStore.getDiagram(this.diagId);
-        //this.notes = this.diagram.notes;
+     
+        ShapeRender = new Shapes(this.noteWidth, this.noteHeight)
     },
     components: { FretAnnotations }
 }
@@ -308,9 +255,10 @@ export default {
 }
 
 .noteRemovable {
+    fill:crimson;
     stroke:crimson;
     stroke-width:2;
-     fill-opacity: 0; 
+    fill-opacity: 1; 
 }
 
 .cursor {
@@ -323,7 +271,7 @@ export default {
 
 .fret {
     fill:rgb(255,255,255);
-    stroke-width:0;
+    stroke-width:  0;
     stroke:rgb(0, 0, 0);
     fill-opacity: 0;
 }

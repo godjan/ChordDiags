@@ -24,7 +24,10 @@
         <v-layout>
             <v-flex sm12 lg12 pb-5> 
                 <span><strong>Tuning</strong> {{ sheet.tuning}}</span>
-                <span class="ml-5" v-if="sheet.author"><strong>Author</strong> {{  sheet.author.name }} </span>
+                <span class="ml-5" v-if="sheet.author"><strong>Author</strong>
+
+                 <a @click="openDrawer(sheet.author.userId)">{{  sheet.author.name }} </a>
+                </span>
             </v-flex>
         </v-layout>
 
@@ -91,6 +94,11 @@ export default {
       
     },
     methods: {
+
+        openDrawer(userId) {
+        
+           this.$emit('openDrawer', userId);
+        },
 
         closeDeleteDiagramDialog() {
 

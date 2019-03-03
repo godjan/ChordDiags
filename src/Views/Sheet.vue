@@ -75,23 +75,60 @@
                 </v-toolbar>
                 <v-card>
                     <v-container fluid grid-list-lg>
-                        <Editor></Editor> 
+                        <Editor @openDrawer="getUserSheets"></Editor> 
+                       
                     </v-container>
-                 </v-card>
+                </v-card>
+                <v-card>
+                    <v-expansion-panel
+                            v-model="panel"
+                            expand
+                            >
+                            <v-expansion-panel-content>                    
+                            
+                                <div slot="header" class="title">Notes / Comments</div>
+                                <v-card color="#f5f5f5" >
+                                    <v-card-text >
+                                        {{ state.sheet.description}}
+                                    </v-card-text>
+                                </v-card>
+                            </v-expansion-panel-content>
+                    </v-expansion-panel>
+                </v-card>
             </v-flex>
          </v-layout>
     </v-container>
     
-     <confirm-dialog :content="`Delete sheet ?`" 
+    <v-navigation-drawer
+        v-model="drawer"
+        absolute
+        temporary>
+
+       <v-list class="pa-1">
+          <v-list-tile avatar>
+            <v-list-tile-avatar>
+              <img src="https://randomuser.me/api/portraits/men/85.jpg">
+            </v-list-tile-avatar>
+  
+            <v-list-tile-content>
+              <v-list-tile-title>John Leider</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+
+    </v-navigation-drawer>
+
+
+    <confirm-dialog :content="`Delete sheet ?`" 
                             @Submit="confirmDeleteSheet"
                             @Cancel="deleteSheetDialog = false"
                             :dialog="deleteSheetDialog"> </confirm-dialog>
 
-     <sheet-details-dialog :active="detailsDialog"
+    <sheet-details-dialog :active="detailsDialog"
                             @onSubmit="detailsDialog = false"
                             @onClose=" detailsDialog = false"
-     >
-     </sheet-details-dialog>
+    >
+    </sheet-details-dialog>
 
     <v-snackbar
       v-model="snackbar"
@@ -178,6 +215,8 @@ export default {
             titleDialog: false,
             snackbar: false,
             range: Array.from(new Array(Config.MAX_FRETSPAN), (val, index)=>index + 1), 
+            panel: [false],
+            drawer:null
         }
     },
     methods: {
@@ -217,6 +256,12 @@ export default {
         redo() {
 
             this.$sheetStore.redo();
+        },
+
+        getUserSheets(userId) {
+
+            this.drawer = !this.drawer;
+            console.log(userId)
         }
     },
    

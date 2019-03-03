@@ -7,14 +7,15 @@ import HistoryService from './history.js'
    constructor() {
 
       this.state = {
+
             sheet: {
                diagrams:[]
             },
+            
             edition: false,
 
-           // historyService: HistoryService
+            userId:null
       }
-
    }
 
    loadSheets() {
@@ -214,7 +215,7 @@ import HistoryService from './history.js'
    
    // triggers a state save
    saveState() {
-      
+
       HistoryService.add(this.state.sheet.diagrams);
    }
 

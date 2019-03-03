@@ -56,7 +56,7 @@
                     <span :class="{ 'mt-3' : state.edition}">   
                         <fretboard :diagId="diagram.id"
                                    :width="150" 
-                                   :height="140"
+                                   :height="150"
                                    :fretSpan="span" 
                                    :strings="strings"
                                    :activeShape="activeShape"
@@ -64,7 +64,6 @@
                     </span>
                     <span v-if="state.edition" class="mt-3">
 
-                       
                         <v-btn-toggle v-model="toggle_one" mandatory class="ml-2">
 
                             <v-icon size="17" class="mb-1 icon-hovered" @click="setShape('dot')" 
