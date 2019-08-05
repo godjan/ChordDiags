@@ -9,9 +9,14 @@
             </v-toolbar-title>
             <v-btn flat class="white--text" href="/sheet"> <v-icon>add_circle_outline</v-icon> new sheet</v-btn>
             <v-spacer></v-spacer>
-            <v-toolbar-items dclass="hidden-sm-and-down">
-              <v-btn flat to="/login">Log in</v-btn>
-          
+            <v-toolbar-items dclass="hidden-sm-and-down" sv-show="userId">
+               <v-btn flat to="/profile">
+               <v-icon>face</v-icon>
+               Profile</v-btn>
+            </v-toolbar-items>
+            <v-toolbar-items dclass="hidden-sm-and-down" v-show="!userId">
+               <v-btn flat to="/signup">Sign up</v-btn>
+               <v-btn flat to="/signin">Sign in</v-btn>
             </v-toolbar-items>
           </v-toolbar>
          
@@ -31,6 +36,11 @@ export default {
   data () {
     return {
    
+    }
+  },
+  computed: {
+    userId() {
+        return this.$sheetStore.state.userId;
     }
   }
 }

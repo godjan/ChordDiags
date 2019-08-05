@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from "vue-router";
 import Home from "./Views/Home";
-import Login from "./Views/Login";
+import Signin from "./Components/User/Signin";
+import Signup from "./Components/User/Signup";
 import Create from "./Views/Create"
 import Sheet from "./Views/Sheet"
 
@@ -17,8 +18,12 @@ export default new VueRouter({
       component: Home
     },
     {
-      path:"/login",
-      component:Login
+      path:"/signin",
+      component:Signin
+    },
+    {
+      path:"/signup",
+      component:Signup
     },
     {
       path:"/create",

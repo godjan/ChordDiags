@@ -73,12 +73,16 @@
                     <v-btn @click="deleteSheetDialog = true"><v-icon>delete_outline</v-icon></v-btn>
                     
                 </v-toolbar>
+
+                <!------------------------------------------------ EDITOR -------------------------------------------->
                 <v-card>
                     <v-container fluid grid-list-lg>
                         <Editor @openDrawer="getUserSheets"></Editor> 
                        
                     </v-container>
                 </v-card>
+
+
                 <v-card>
                     <v-expansion-panel
                             v-model="panel"

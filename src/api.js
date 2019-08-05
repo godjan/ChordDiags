@@ -10,10 +10,11 @@ export default {
 
     getSheets() {
 
-        const filter = '{"isPrivate" :false}',
-              fields = '{ "title":1, "tags":1, "description":1, "author":1, "authorId":1, "isPrivate": 1, "docTitle":1}';
+        // const filter = '{"isPrivate" :false}',
+            //   fields = '{ "title":1, "tags":1, "description":1, "author":1, "authorId":1, "isPrivate": 1, "docTitle":1}';
 
-        return  axios.get(`${ApiProvider.DIAGS_DB_URL}?apiKey=${ApiProvider.MONGO_API_KEY}`); //&f=${fields}`);
+        //return  axios.get(`${ApiProvider.DIAGS_DB_URL}?apiKey=${ApiProvider.MONGO_API_KEY}`); //&f=${fields}`);
+        
     },
 
     getSheet(id) {
