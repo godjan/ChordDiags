@@ -1,6 +1,7 @@
 import Config from './config.js'
 import ApiService from './api.js'
 import HistoryService from './history.js'
+import * as Firebase from 'firebase'
 
  class SheetStore
  {
@@ -13,7 +14,7 @@ import HistoryService from './history.js'
             },
             
             edition: false,
-
+            user: { userId: null, mail: null},
             userId:null
       }
    }
@@ -24,10 +25,10 @@ import HistoryService from './history.js'
    }
 
    loadSheet(id) {
-
+      const self = this;
       return ApiService.getSheet(id)
                        .then((response) => {
-
+                           self.state.edition = false;
                            HistoryService.reset();
                            HistoryService.add(response.data.diagrams);
                            return response;
@@ -226,7 +227,7 @@ import HistoryService from './history.js'
       if(!state) return;
 
       //executeAction(item);
-      debugger
+      
       this.state.sheet.diagrams = JSON.parse(JSON.stringify(state));
    }
 
@@ -252,7 +253,35 @@ import HistoryService from './history.js'
          this.addNote(item.diagId, item.note)
       }
    }
-    
+   
+   // user
+   signUserUp(user) {
+
+      return Firebase.auth()
+                     .createUserWithEmailAndPassword(user.email, user.password)
+                     .then(result => {
+
+                        this.state.user = { userId: result.user.uid, 
+                                             email: result.user.email };
+                     });
+                     // .catch(
+                     //    error => { console.log(error) }
+                     // );
+   }
+
+   signUserIn(user) {
+
+      return Firebase.auth()
+              .signInWithEmailAndPassword(user.email, user.password)
+              .then(result => {
+
+                 this.state.user = { userId: result.user.uid, 
+                                     email: result.user.email };
+
+                 console.log('user logged in : ' + this.state.user.userId);
+              });
+             
+   }
  }
 
  export default new SheetStore()

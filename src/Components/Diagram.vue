@@ -4,14 +4,14 @@
     <!-- <v-card -->
         <p class="title"
           
-           :style="state.edition ? 'margin-left:27%' : 'margin-left:30%'"
-           v-show="state.edition == false">{{diagram.chordName}}
+           :style="edition ? 'margin-left:27%' : 'margin-left:30%'"
+           v-show="edition == false">{{diagram.chordName}}
         </p> 
 
         <v-toolbar dense flat  
                    @mouseover="showmenu = true" 
                    @mouseleave="showmenu = false" 
-                   v-show="state.edition">
+                   v-show="edition">
 
             <input class="title active ml-5" 
                    type="text" 
@@ -50,10 +50,10 @@
             </v-toolbar-items>
         </v-toolbar>
         <!--v-card-text class="px-0"-->
-            <v-container text-center-xs class="mb-4" style="padding:5px">
-                <v-layout row>
-                   
-                    <span :class="{ 'mt-3' : state.edition}">   
+            <v-container fluid class="mb-4">
+                <v-layout row  align-center>
+                   <v-flex xs10 offset-xs1>
+                    <span :class="{ 'mt-3 ' : state.edition}">   
                         <fretboard :diagId="diagram.id"
                                    :width="150" 
                                    :height="150"
@@ -87,7 +87,7 @@
                         </v-btn-toggle>
                     
                     </span>
-                    
+                    </v-flex>
                 </v-layout>
                  <v-layout row>
                      <input :disabled="!state.edition"
@@ -141,6 +141,9 @@ export default {
         }
     },
     computed: {
+        edition() {
+            return this.state.edition;
+        },
         span() {
 
             return this.fretSpan || Config.FRETSPAN_DEFAULT;

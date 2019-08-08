@@ -78,7 +78,15 @@ export default {
 
     methods: {
         onSignup() {
-            console.log({ email: this.email, password: this.password, confirmPassword: this.confirmPassword})
+            let self = this;
+            this.$sheetStore.signUserUp({ email: this.email, password: this.password})
+                            .then(r => {
+                                self.$router.push('/');
+                                }
+                            )
+                            .catch(
+                                error => { console.log(error) }
+                            );
         }
     }
 }

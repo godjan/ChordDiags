@@ -6,7 +6,7 @@
                     <v-card-text>
                         
                         <v-container>
-                            <form @submit.prevent ="onSignin">
+                            <form @submit.prevent ="onSignIn">
                                 <v-layout row>
                                     <v-flex xs12>
                                         <v-text-field
@@ -61,8 +61,18 @@ export default {
     },
 
     methods: {
-        onSignin() {
-            console.log({ email: this.email, password: this.password})
+
+         onSignIn() {
+
+            let self = this;
+            this.$sheetStore.signUserIn({ email: this.email, password: this.password})
+                            .then(r => {
+                                self.$router.push('/');
+                                }
+                            )
+                            .catch(
+                                error => { console.log(error) }
+                            );
         }
     }
 }

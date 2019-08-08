@@ -5,9 +5,9 @@
            
             <v-container fluid grid-list-sm>
                 <v-layout row wrap>
-                    <!-- <v-flex v-for="tune in tunes" :key="tune._id.$oid"> -->
-                        <v-flex xs10>
-                        <v-data-table
+                    <v-flex v-for="tune in tunes" :key="tune._id.$oid">
+                        <!-- <v-flex xs10> -->
+                        <!-- <v-data-table
                             :headers="headers"
                             :items="tunes"
                             hide-actions
@@ -20,21 +20,21 @@
                                 <td >{{ props.item.author.name }}</td>
                             
                             </template>
-                        </v-data-table>
+                        </v-data-table> -->
 
-                        <!-- <v-card :to="`/sheet/${tune._id.$oid}`" >
+                        <v-card :to="`/sheet/${tune._id.$oid}`" >
                             
                             <v-card-title>
                                 <div>
                                     <span >{{ tune.title }}</span><br>
                                     <span class="grey--text">{{ tune.description }}</span><br>
-                                    <span class="grey--text">{{ tune.author }}</span>
+                                    <span class="grey--text">{{ tune.author.name }}</span>
                                 </div>
                             </v-card-title>
                             <v-card-actions>
                          
                             </v-card-actions>
-                        </v-card> -->
+                        </v-card>
                     </v-flex>
                 </v-layout>
             </v-container>

@@ -9,7 +9,8 @@
             </v-toolbar-title>
             <v-btn flat class="white--text" href="/sheet"> <v-icon>add_circle_outline</v-icon> new sheet</v-btn>
             <v-spacer></v-spacer>
-            <v-toolbar-items dclass="hidden-sm-and-down" sv-show="userId">
+           
+            <v-toolbar-items dclass="hidden-sm-and-down" v-show="userId">
                <v-btn flat to="/profile">
                <v-icon>face</v-icon>
                Profile</v-btn>
@@ -35,12 +36,17 @@ export default {
   name: 'app',
   data () {
     return {
-   
+       userId: this.$sheetStore.state.user.userId
     }
   },
-  computed: {
-    userId() {
-        return this.$sheetStore.state.userId;
+  // computed: {
+  //   userId() {
+  //       return this.$sheetStore.state.user.userId;
+  //   }
+  // },
+ watch: {
+    userId: function (val) {
+      console.log('userid changed ' + val)
     }
   }
 }
