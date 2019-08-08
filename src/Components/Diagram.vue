@@ -3,8 +3,7 @@
 <section>
     <!-- <v-card -->
         <p class="title"
-          
-           :style="edition ? 'margin-left:27%' : 'margin-left:30%'"
+           :style="edition ? 'margin-left:27%' : 'margin-left:40%'"
            v-show="edition == false">{{diagram.chordName}}
         </p> 
 
@@ -17,7 +16,7 @@
                    type="text" 
                    placeholder="Chord" 
                    title="Chord name"
-                   style="width:40%"
+                   style="width:70% "
                    v-model="diagram.chordName"
                    @blur="onChordChanged()" />
                    
@@ -50,12 +49,12 @@
             </v-toolbar-items>
         </v-toolbar>
         <!--v-card-text class="px-0"-->
-            <v-container fluid class="mb-4">
-                <v-layout row  align-center>
-                   <v-flex xs10 offset-xs1>
+            <v-container fluid class="mb-4" style="padding:20px">
+                <v-layout row  align-center style="min-width:184px">
+                   <v-flex xs12>
                     <span :class="{ 'mt-3 ' : state.edition}">   
                         <fretboard :diagId="diagram.id"
-                                   :width="150" 
+                                   :width="140" 
                                    :height="150"
                                    :fretSpan="span" 
                                    :strings="strings"
@@ -187,6 +186,9 @@ export default {
 </script>
 
 <style >
+input { 
+    text-align: center; 
+}
 
 .v-btn-toggle {
   flex-direction: column; box-shadow:none;
